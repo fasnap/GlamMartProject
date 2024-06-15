@@ -143,9 +143,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+# List of directories where Django will look for additional static files.
 STATICFILES_DIRS = [
     BASE_DIR/ 'static'
 ]
+# Absolute path to the directory where collectstatic will collect static files for deployment.
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media file configuration
 MEDIA_URL = '/media/'
