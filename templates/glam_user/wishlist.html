@@ -1,0 +1,79 @@
+{% extends 'glam_user/base.html' %}
+{% load static %}
+{% block content %}
+<style>
+body{
+        background-color: #F5F5F5;
+    }
+</style>
+<body>
+    <!-- ========================= SECTION CONTENT ========================= -->
+    <section class="section-conten padding-y bg">
+    
+        <div class="container">
+            <div class="row mt-4">
+			{% include 'glam_user/includes/dashboard_sidebar.html' %}
+                <main class="col-md-9">
+                {% if wishlist %}
+                {% for item in wishlist %}
+                    <div class="row mt-3"> 
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="row">
+                                    <div class="col-lg-2">
+                                        <div class="card-body text-left">
+                                            <div class="row">
+                                                <img src="{{item.product.product_image1.url}}" class="img-fluid ml-3" style="height: 100px; width: auto;" alt="No image"> 
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-3">
+                                        <div class="card-body text-right">
+                                            <h5 class="mb-4 text-dark"></h5>
+                                            <h6>
+                                                {{item.product.product_name}}
+                                            </h6>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-2">
+                                        <div class="card-body text-right mt-3">
+                                            <h5 class="text-success">${{item.product.offer_price}}</h5>
+                                            <p class="text-danger">$<del>{{item.product.actual_price}}</del></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-5">
+                                        <div class="card-body text-right mt-3">
+                                            <a class="btn btn-success" href="{{item.product.get_url}}">View Product</a>
+                                            <a class="btn btn-danger" href="{% url 'remove_wishlist' item.product.id %}">Remove</a>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- row.// -->   
+                {% endfor %}
+                {% else %}
+                <div class="row mt-5"> 
+                    <div class="col-lg-12">
+                        <div class="card d-flex justify-content-center align-items-center">
+                            <div class="card-body">
+                                <h5 class="text-danger mt-3">Your Wishlist is Empty</h5>
+                                <a class="btn btn-success mt-4" href="{% url 'store' %}">ADD PRODUCT TO WISHLIST</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}  
+                </main>
+            </div> <!-- row.// -->
+        </div>
+    </section>
+    <!-- ========================= SECTION CONTENT END// ========================= -->
+    
+</body>
+</html>
+{% endblock %}

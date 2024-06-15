@@ -1,0 +1,459 @@
+{% extends 'glam_user/base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    /* Custom styling to remove button appearance */
+    .btn-icon {
+        border: none;
+        background-color: transparent;
+        padding: 0;
+    }
+    body{
+        background-color: #F5F5F5;
+    }
+    
+</style>
+<body>
+    <!-- ========================= SECTION CONTENT ========================= -->
+    <section class="section-conten padding-y bg">
+        <div class="container">
+            <div class="row mt-4">
+                {% include 'glam_user/includes/dashboard_sidebar.html' %}
+                <main class="col-md-9">
+                    <h4>Manage Address</h4>
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <button id="newAddressBtn" class="btn btn-primary" type="button" >+ Add New Address</button>
+                                    <form id="newAddressForm" action="{% url 'add-new-address' %}" method="POST" style="display: none;">
+                                        {% csrf_token %}
+                                        <div class="form-row mt-3">
+                                            <div class="form-group col-md-6">
+                                                <label for="first_name">First Name</label>
+                                                <input type="text" class="form-control" id="first_name" name="first_name" placeholder="First Name" required>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="last_name">Last Name</label>
+                                                <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Last Name" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="phone_number">Phone</label>
+                                                <input type="text" class="form-control" id="phone_number" name="phone_number" required>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="email">Email</label>
+                                                <input type="email" class="form-control" id="email" name="email" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="address_line1">Address</label>
+                                            <input type="text" class="form-control" id="address_line1" name="address_line1" placeholder="Street Address" required>
+                                            <input type="text" class="form-control mt-2" id="address_line2" name="address_line2" placeholder="Apartment, suite, unit, etc. (optional)">
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="country">Country</label>
+                                                <input type="text" class="form-control" id="country" name="country" required>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="state">State</label>
+                                                <input type="text" class="form-control" id="state" name="state" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="city">City</label>
+                                                <input type="text" class="form-control" id="city" name="city" required>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="zip_code">Zip Code</label>
+                                                <input type="text" class="form-control" id="zip_code" name="zip_code" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-md-6">
+                                                <button type="submit" class="btn btn-primary mr-2">Save Address</button>
+                                                <button id="cancelAddressBtn" class="btn btn-secondary" type="button" >Cancel</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3" id="editAddressForm" style="display: none;">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <form action="" method="POST" id="editForm">
+                                        {% csrf_token %}
+                                        <h6>Edit Address</h6>
+                                        <div class="form-row mt-3">
+                                            <div class="form-group col-md-6">
+                                                <label for="edit_first_name">First Name</label>
+                                                <input type="text" class="form-control" id="edit_first_name" name="first_name" placeholder="First Name" required>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="edit_last_name">Last Name</label>
+                                                <input type="text" class="form-control" id="edit_last_name" name="last_name" placeholder="Last Name" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="edit_phone_number">Phone</label>
+                                                <input type="text" class="form-control" id="edit_phone_number" name="phone_number" required>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="edit_email">Email</label>
+                                                <input type="email" class="form-control" id="edit_email" name="email" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="edit_address_line1">Address</label>
+                                            <input type="text" class="form-control" id="edit_address_line1" name="address_line1" placeholder="Street Address" required>
+                                            <input type="text" class="form-control mt-2" id="edit_address_line2" name="address_line2" placeholder="Apartment, suite, unit, etc. (optional)">
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="edit_country">Country</label>
+                                                <input type="text" class="form-control" id="edit_country" name="country" required>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="edit_state">State</label>
+                                                <input type="text" class="form-control" id="edit_state" name="state" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="edit_city">City</label>
+                                                <input type="text" class="form-control" id="edit_city" name="city" required>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="edit_zip_code">Zip Code</label>
+                                                <input type="text" class="form-control" id="edit_zip_code" name="zip_code" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-md-6">
+                                                <button type="submit" class="btn btn-primary mr-2">Save Address</button>
+                                                <button id="cancelEditAddressBtn" class="btn btn-secondary" type="button" >Cancel</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% for address in addresses %}
+                    <div class="row mt-3"> 
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="row">
+                                    <div class="col-lg-5">
+                                        <div class="card-body text-left">
+                                            <div class="row">
+                                                <h6 class="text-dark">{{address.first_name}}  {{address.last_name}} {{address.phone_number}}</h6><br><br>
+                                                <p>{{address.address_line1}} {{address.address_line2}} {{address.city}} {{address.state}} {{address.country}} {{address.zip_code}}</p>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <!-- Optional: Additional column -->
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <!-- Optional: Additional column -->
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <div class="card-body text-right">
+                                            <button type="button" class="btn-icon btn-transparent editAddressBtn" data-address-id="{{ address.id }}"><i class="bi bi-pen text-primary"></i></button>
+                                            
+                                            <td> <a href="{% url 'delete_address' address.id %}" onclick="return confirmDelete('{% url 'delete_address' address.id %}')" ><i class="bi bi-trash text-danger"></i></a></td>
+                                            {% if address.is_default %}
+                                                <span class="text-success"><br><br>Active</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- row.// -->   
+                    {% endfor %}   
+                </main>
+            </div> <!-- row.// -->
+        </div>
+    </section>
+    <!-- ========================= SECTION CONTENT END// ========================= -->
+    <script>
+$(document).ready(function(){
+	$.validator.addMethod("noSpace", function(value, element) { 
+        return value == '' || (value.trim().indexOf(' ') == -1 && value.trim() == value); 
+    }, "No spaces are allowed.");
+
+	$.validator.addMethod("lettersOnly", function(value, element){
+		return this.optional(element) || /^[a-zA-Z]+$/.test(value);
+	}), "Only letters are allowed";
+
+	$.validator.addMethod("strictEmail", function(value, element) {
+        return this.optional(element) || /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
+    }, "Please enter a valid email address.");
+
+	$.validator.addMethod("validPhone", function(value, element) {
+        return this.optional(element) || /^\d{10}$/.test(value);
+    },"Please enter a valid 10-digit phone number.");
+
+	$('#newAddressForm').validate({
+		rules: {
+			first_name:{
+				required: true,
+				minlength: 3,
+				noSpace: true,
+				lettersOnly: true,
+			},
+			last_name:{
+				required: true,
+				minlength: 1,
+				noSpace: true,
+				lettersOnly: true,
+			},
+			email:{
+				required: true,
+				email: true,
+				strictEmail: true,
+				noSpace: true,
+			},
+			phone_number:{
+				validPhone: true
+			},
+            address_line1:{
+				required: true,
+				noSpace: true,
+				lettersOnly: true,
+			},
+            country:{
+				required: true,
+				noSpace: true,
+				lettersOnly: true,
+			},
+            state:{
+				required: true,
+			},
+            city:{
+				required: true,
+			},
+            zip_code:{
+				required: true,
+			},
+		},
+		messages: {
+			first_name:{
+				required: "Please enter your first name",
+				minlength: "First name must be at least 3 characters long",
+				noSpace: "First name must not contain spaces",
+				lettersOnly: "First name must contain only letters"
+			},
+			last_name:{
+				required: "Please enter your last name",
+				minlength: "Last name must be at least 1 characters long",
+				noSpace: "Last name must not contain spaces",
+				lettersOnly: "Last name must contain only letters"
+			},
+			email:{
+				required: "Please enter your email",
+				noSpace: "Email must not contain spaces",
+				email: "Please enter a valid email address",
+				strictEmail: "Please enter a valid email address"
+			},
+			phone_number:{
+				validPhone: "Please enter a valid 10-digit phone number"
+			},
+            address_line1:{
+				required: "Please enter your Address",
+                lettersOnly: "Address must contain only letters"
+			},
+            country:{
+				required: "Please enter your Country",
+				noSpace: "Country must not contain spaces",
+                lettersOnly: "Country must contain only letters"
+			},
+            state:{
+				required: "Please enter your State",
+			},
+            city:{
+				required: "Please enter your City",
+			},
+            zip_code:{
+				required: "Please enter your Zip code",
+			},
+		},
+		errorElement: 'div',
+        errorPlacement: function(error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        },
+        highlight: function(element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function(element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        }
+	});
+    $('#editForm').validate({
+		rules: {
+			first_name:{
+				required: true,
+				minlength: 3,
+				noSpace: true,
+				lettersOnly: true,
+			},
+			last_name:{
+				required: true,
+				minlength: 1,
+				noSpace: true,
+				lettersOnly: true,
+			},
+			email:{
+				required: true,
+				email: true,
+				strictEmail: true,
+				noSpace: true,
+			},
+			phone_number:{
+				validPhone: true
+			},
+            address_line1:{
+				required: true,
+				noSpace: true,
+				lettersOnly: true,
+			},
+            country:{
+				required: true,
+				noSpace: true,
+				lettersOnly: true,
+			},
+            state:{
+				required: true,
+			},
+            city:{
+				required: true,
+			},
+            zip_code:{
+				required: true,
+			},
+		},
+		messages: {
+			first_name:{
+				required: "Please enter your first name",
+				minlength: "First name must be at least 3 characters long",
+				noSpace: "First name must not contain spaces",
+				lettersOnly: "First name must contain only letters"
+			},
+			last_name:{
+				required: "Please enter your last name",
+				minlength: "Last name must be at least 1 characters long",
+				noSpace: "Last name must not contain spaces",
+				lettersOnly: "Last name must contain only letters"
+			},
+			email:{
+				required: "Please enter your email",
+				noSpace: "Email must not contain spaces",
+				email: "Please enter a valid email address",
+				strictEmail: "Please enter a valid email address"
+			},
+			phone_number:{
+				validPhone: "Please enter a valid 10-digit phone number"
+			},
+            address_line1:{
+				required: "Please enter your Address",
+                lettersOnly: "Address must contain only letters"
+			},
+            country:{
+				required: "Please enter your Country",
+				noSpace: "Country must not contain spaces",
+                lettersOnly: "Country must contain only letters"
+			},
+            state:{
+				required: "Please enter your State",
+			},
+            city:{
+				required: "Please enter your City",
+			},
+            zip_code:{
+				required: "Please enter your Zip code",
+			},
+		},
+		errorElement: 'div',
+        errorPlacement: function(error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        },
+        highlight: function(element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function(element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        }
+	});
+});
+</script>
+    <script>
+        document.getElementById('newAddressBtn').addEventListener('click', function() {
+            // Show new address form when "Add New Address" button clicked
+            document.getElementById('newAddressForm').style.display = 'block';
+        });
+
+        // Handle showing the edit address form
+        const editButtons = document.querySelectorAll('.editAddressBtn');
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const addressId = this.getAttribute('data-address-id');
+                fetch(`/users/get-address-details/${addressId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // set form action dynamically
+                        const editForm = document.getElementById('editForm')
+                        editForm.action= '/users/edit-address/' + addressId + '/';
+                        document.getElementById('edit_first_name').value = data.first_name;
+                        document.getElementById('edit_last_name').value = data.last_name;
+                        document.getElementById('edit_email').value = data.email;
+                        document.getElementById('edit_phone_number').value = data.phone_number;
+                        document.getElementById('edit_address_line1').value = data.address_line1;
+                        document.getElementById('edit_address_line2').value = data.address_line2;
+                        document.getElementById('edit_country').value = data.country;
+                        document.getElementById('edit_state').value = data.state;
+                        document.getElementById('edit_city').value = data.city;
+                        document.getElementById('edit_zip_code').value = data.zip_code;
+
+                        // Show the edit address form
+                        document.getElementById('editAddressForm').style.display = 'block';
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        });
+
+        document.getElementById('cancelAddressBtn').addEventListener('click', function() {
+            // Hide new address form when "Cancel" button clicked
+            document.getElementById('newAddressForm').style.display = 'none';
+        });
+
+        document.getElementById('cancelEditAddressBtn').addEventListener('click', function() {
+            // Hide edit address form when "Cancel" button clicked
+            document.getElementById('editAddressForm').style.display = 'none';
+        });
+
+        function confirmDelete(url) {
+            if (confirm("Are you sure you want to delete the address?")) {
+                window.location.href = url; 
+            } else {
+                window.location.href = "{% url 'manage-address' %}";
+            }
+            return false; 
+        }
+
+    </script>   
+</body>
+</html>
+{% endblock %}

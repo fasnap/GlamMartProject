@@ -1,0 +1,50 @@
+{% extends 'glam_admin/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container-fluid vw-100 d-flex flex-column" style="padding-right: 60px;">
+    <div class="main-panel flex-grow-1">
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h3 class="page-title">
+                    <span class="page-title-icon bg-gradient-primary text-white me-2">
+                        <i class="mdi mdi-folder-outline"></i>
+                    </span> Add Sub Category
+                </h3>
+            </div>
+            <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Add New Sub Category</h4>
+                        <form class="forms-sample" method="POST" action="{% url 'add-subcategory' category_slug=category_slug %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="exampleInputName1">Sub Category Name</label>
+                                <input type="text" class="form-control" id="exampleInputName1" placeholder="Sub Category Name" name="sub_category_name">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleTextarea1">Description</label>
+                                <textarea class="form-control" id="exampleTextarea1" rows="4" name="description"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputName1">Sub Category Offer %</label>
+                                <input type="text" class="form-control" id="offer" placeholder="Offer %" name="subcategory_offer">
+                            </div>
+                            <div class="form-group">
+                                <label>Category Image</label>
+                                <div class="input-group col-xs-12">
+                                    <input type="file" class="form-control file-upload-info" placeholder="Upload Image" name="sub_category_image">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
+                            <a class="btn btn-light" href="{% url 'sub-category' category_slug %}">Cancel</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- content-wrapper ends -->
+    </div>
+    <!-- main-panel ends -->
+</div>
+<!-- container-scroller ends -->
+{% endblock %}

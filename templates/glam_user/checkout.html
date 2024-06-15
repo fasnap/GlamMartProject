@@ -1,0 +1,242 @@
+{% extends 'glam_user/base.html' %}
+{% load static %}
+{% block content %}
+<head>
+<style>
+.order-summary {
+    list-style: none;
+    padding: 0;
+}
+
+.order-summary li {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.order-summary .amount {
+    float: right;
+}
+</style>
+</head>
+<body>
+    <!-- Breadcrumb Begin -->
+    <div class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__links">
+                        <a href="./index.html"><i class="fa fa-home"></i> Home</a>
+                        <span>Shopping cart</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- Checkout Section Begin -->
+    <section class="checkout spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12">
+                    <form action="{% url 'place-order' %}" method="POST" class="checkout__form">
+                    {% csrf_token %}
+                        <h5>Delivery Address</h5>
+                        <div class="checkout__form__input ">
+                            <p>Select Address</p>
+                            <select name="address_id" id="address_id" class="form-control">
+                                
+                                {% for address in addresses %}
+                                    {% if address.is_deleted == False %}
+                                    <option value="{{ address.id }}" {% if address.is_default %}selected{% endif %}>{{ address.first_name }} {{address.last_name}} ,{{address.phone_number}}, {{ address.address_line1 }}, {{ address.city }}, {{ address.state }}, {{ address.country }}, {{ address.zip_code }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div id="newAddressFields" style="display: none;">
+                            
+                            <div class="checkout__form__input">
+                                    <p>First Name <span>*</span></p>
+                                    <input type="text" name="first_name" placeholder="First Name">
+                            </div>
+
+                            <div class="checkout__form__input">
+                                <p>Last Name <span>*</span></p>
+                                <input type="text" name="last_name" placeholder="Last Name">
+                            </div>
+                    
+                            <div class="checkout__form__input">
+                                <p>Phone <span>*</span></p>
+                                <input type="text" name="phone_number">
+                            </div>
+                            
+                            <div class="checkout__form__input">
+                                <p>Email <span>*</span></p>
+                                <input type="email" name="email">
+                            </div>
+                            
+                            <div class="checkout__form__input">
+                                <p>Address <span>*</span></p>
+                                <input type="text" placeholder="Street Address" name="address_line1">
+                                <input type="text" placeholder="Apartment. suite, unite ect ( optinal )" name="address_line2">
+                            </div>
+                            
+                            <div class="checkout__form__input">
+                                <p>Country <span>*</span></p>
+                                <input type="text" name="country">
+                            </div>
+                        
+                            <div class="checkout__form__input">
+                                <p>State <span>*</span></p>
+                                <input type="text" name="state">
+                            </div>
+
+                            <div class="checkout__form__input">
+                                <p>Town/City <span>*</span></p>
+                                <input type="text" name="city">
+                            </div>
+                        
+                            <div class="checkout__form__input">
+                                <p>Postcode/Zip <span>*</span></p>
+                                <input type="text" name="zip_code">
+                            </div> 
+                        </div>  
+                            <div class="checkout__form__input mt-3">
+                                <p>Oder notes </p>
+                                <input type="text" placeholder="Note about your order, e.g, special noe for delivery" name="order_note">
+                            </div> 
+                        <button id="newAddressBtn" class="btn btn-secondary mt-3" type="button" >Add New Address</button>      
+                </div>
+            </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 mt-3">
+                        <div class="card ">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-6 col-xs-12">
+                                        <div class="sccb-discount shopping-cart-content-box">
+                                            <h4 class="d-flex justify-content-center text-success">Apply coupon</h4>
+                                            <span class="sccb-shipping-title d-flex mt-3">Enter your coupon</span>
+                                            <div class="sccb-discount-subscribe-box clearfi">
+                                                <input type="text" class="form-control mt-3" placeholder="Coupon code" id="coupon"/>
+                                                <div class="pt-2 d-flex justify-content-center">
+                                                    <button type="button" id="apply" value="{{grand_total}}" onclick="couponCheck()" class="btn btn-secondary mt-3" style="color: white; background-color: rgb(77, 30, 37);">
+                                                        Redeem
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 mt-3">
+                        <div class="checkout__order">
+                            <h5>Your order</h5>
+                            <div class="cart__total__proceed">
+                                <ul class="order-summary">
+                                    <li class="text-secondary row">
+                                        <div class="col">Subtotal:</div>
+                                        <div class="col text-right">$ {{ total }}</div>
+                                    </li>
+                                    <li class="text-secondary row">
+                                        <div class="col">Delivery Charge:</div>
+                                        <div class="col text-right">{% if delivery_charge > 0 %}$ {{ delivery_charge }}{% else %} Free Delivery {% endif %}</div>
+                                    </li>
+                                    <li class="text-secondary row">
+                                        <div class="col">Coupon code:</div>
+                                        <div id="promo" class="col text-right"></div>
+                                    </li>
+                                    <li class="text-secondary row">
+                                        <div class="col">Discount:</div>
+                                        <div id="discount" class="col text-right text-success"></div>
+                                    </li>
+                                    <hr>
+                                    <li id="grandtotal" class="text-secondary row">
+                                        <div class="col">Total Amount:</div>
+                                        <div class="col text-right">$ {{ grand_total }}</div>
+                                    </li>
+                                </ul>
+                                <button type="submit" name="submit" class="btn btn-primary btn-block mt-3">Place Order</button> 
+                                    
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                </form>
+           
+        </div>
+    </section>
+    
+    <!-- Checkout Section End -->
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+    document.getElementById('address_id').addEventListener('change', function() {
+        var addressId = this.value;
+        if (addressId === "") {
+            // No address selected, show new address fields
+            document.getElementById('newAddressFields').style.display = 'block';
+        } else {
+            // Address selected, hide new address fields
+            document.getElementById('newAddressFields').style.display = 'none';
+        }
+    });
+
+    document.getElementById('newAddressBtn').addEventListener('click', function() {
+        // Show new address fields when "Add New Address" button clicked
+        document.getElementById('newAddressFields').style.display = 'block';
+        // Clear the selected value of the select element
+        document.getElementById('address_id').selectedIndex = 0;
+    });
+
+    $(document).ready(function () {
+        console.clear();
+        document.getElementById("promo").textContent = "";
+    });
+
+    function couponCheck() {
+    var coupon = $("#coupon").val();
+    var total = $("#apply").val();
+
+    $.ajax({
+        url: "{%url 'checkCoupon'%}",
+        type: "POST",
+        data: {
+            coupon: coupon,
+            total: total,
+            csrfmiddlewaretoken: "{{csrf_token}}",
+    },
+    dataType: "json",
+    success: function (json) {
+        if (json.flag == 1) {
+            swal("Oops", "Coupon is already used", "error");
+        } else if (json.flag == 0) {
+            swal("Oops", "Coupon is Not Active", "error");
+        } else {
+            swal({
+                title: "Congratulation!",
+                text: "You Got A Coupon!",
+                icon: "success",
+                button: "Aww yess!",
+            });
+            console.log(json.discount_price)
+            document.getElementById("grandtotal").innerHTML = '<div class="col">Total Amount:</div><div class="col text-right">$ ' + json.total + '</div>';
+            document.getElementById("discount").innerHTML = '<div class="col text-right text-success">- $ ' + json.discount_price + '</div>';
+            if ($("#coupon").val() !== "") {
+                    document.getElementById("promo").innerHTML = '<div class="col text-right">' + $("#coupon").val() + '</div>';
+                } else {
+                    document.getElementById("promo").innerHTML = '';
+            }
+        }
+    },
+    });
+  }
+</script>
+
+</body>
+</html>
+
+{% endblock %}

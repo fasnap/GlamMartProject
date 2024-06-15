@@ -1,0 +1,196 @@
+{% extends 'glam_user/base.html' %}
+{% load static %}
+{% block content %}
+
+<body>
+    <!-- Breadcrumb Begin -->
+    <div class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__links">
+                        <a href="./index.html"><i class="fa fa-home"></i> Home</a>
+                        <span>Shopping cart</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb End -->
+
+    <!-- Shop Cart Section Begin -->
+    <section class="shop-cart spad">
+        <div class="container">
+			{% if not cart_items %}
+                <div class="text-center">
+                    <img class="d-block mx-auto" src="{% static 'glam_user/img/shop-cart/empty.webp' %}" alt="Empty Cart Image" style="max-width: 300px; height: auto;">
+                    <br>
+                    <h2 class="text-center text-danger">Your cart is empty!</h2>
+                    <p class="text-success">Explore our wide selection and find something you like</p>
+                    <div class="text-center">
+                        <a href="{% url 'store' %}" class="btn btn-success">Continue Shopping</a>
+                    </div>
+                </div>
+			{% else %}
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="shop__cart__table">
+                        <table>
+                            <thead>
+                                <tr>
+                                </tr>
+                            </thead>
+                            <tbody>
+								{% for cart_item in cart_items %}
+                                    {% if cart_item.product.is_available %}
+                                    <tr>
+                                        <td class="cart__product__item">
+                                            <img src="{{cart_item.product.product_image1.url}}" alt="" style="max-width: 100px; height: auto;">
+                                            <div class="cart__product__item__title">
+                                                <a href="{{cart_item.product.get_url}}"><h6>{{cart_item.product.product_name}}</h6></a>
+                                                <div class="rating">
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                </div>
+                                                <p class="text-muted small">
+                                                {% if cart_item.variations.all %}
+                                                    {% for item in cart_item.variations.all %}
+                                                    {{ item.variation_category | capfirst }} : {{item.variation_value | capfirst}} <br>
+                                                    {% endfor %}
+                                                {% endif %}
+                                                
+                                            </div>
+                                        </td>
+                                        <td class="cart__price product__details__price">$ {{cart_item.product.offer_price}}<br><p><del>$ {{cart_item.product.actual_price}}</del></p></td>
+                                        <td>
+                                            <div class="col"> 
+                                                <div class="input-group input-spinner">
+                                                    <div class="input-group-prepend">
+                                                        <a href="{% url 'decrement-cart' cart_item.product.id cart_item.id%}" class="btn btn-light border" type="button" id="button-plus">
+                                                            <i class="fa fa-minus text-secondary"></i>
+                                                        </a>
+                                                    </div>
+                                                    <input type="text" class="form-control border" style="width: 50px;" value="{{ cart_item.quantity }}">
+                                                    <div class="input-group-append">
+                                                        <form action="{% url 'add-cart' cart_item.product.id %}" method="POST">
+                                                            {% csrf_token %}
+                                                                {% for item in cart_item.variations.all %}
+                                                                    <input type="hidden" name="{{item.variation_category | lower }}" value="{{item.variation_value | capfirst }}">
+                                                                {% endfor %}
+                                                                <button  class="btn btn-light border" type="submit" id="button-minus" >
+                                                                    <i class="fa fa-plus text-secondary"></i>
+                                                                </button>
+                                                        </form>
+                                                    </div>
+                                                </div> <!-- input-group -->
+                                            </div> <!-- col -->
+                                        </td>
+                                        <td class="cart__total">$ {{cart_item.product_total}}</td>
+                                        <td class="cart__close"><a href="{% url 'remove-cart-item' cart_item.product_id cart_item.id %}" onclick="return confirm('Are you sure to delete the item?')"><span class="icon_close"></span></a></td>
+                                    </tr>
+                                    {% else %}
+                                        {% if cart_item.product.stock <= 0 %}
+                                        <tr>
+                                            <td class="cart__product__item">
+                                                <img src="{{cart_item.product.product_image1.url}}" alt="" style="max-width: 100px; height: auto;">
+                                                <div class="cart__product__item__title">
+                                                    <a href="{{cart_item.product.get_url}}"><h6>{{cart_item.product.product_name}}</h6></a>
+                                                    <h5 class="text-danger mt-3">Out Of Stock</h5>
+                                                </div>
+                                            </td>
+                                            <td class=""><a href="#" class="btn btn-sm btn-success add-wishlist" data-product="{{cart_item.product.id}}">SAVE TO WISHLIST</a></td>
+                                            <td class="cart__close"><a href="{% url 'remove-cart-item' cart_item.product_id cart_item.id %}" onclick="return confirm('Are you sure to delete the item?')" class="btn btn-sm btn-danger">REMOVE</a></td>
+                                        </tr>
+                                        {% else %}
+                                        <tr>
+                                            <td class="cart__product__item">
+                                                <img src="{{cart_item.product.product_image1.url}}" alt="" style="max-width: 100px; height: auto;">
+                                                <div class="cart__product__item__title">
+                                                    <a href="{{cart_item.product.get_url}}"><h6>{{cart_item.product.product_name}}</h6></a>
+                                                    <h5 class="text-danger mt-3">Not Available</h5>
+                                                </div>
+                                            </td>
+                                            <td class=""><a href="#" class="btn btn-sm btn-success add-wishlist" data-product="{{cart_item.product.id}}">SAVE TO WISHLIST</a></td>
+                                            <td class="cart__close"><a href="{% url 'remove-cart-item' cart_item.product_id cart_item.id %}" onclick="return confirm('Are you sure to delete the item?')" class="btn btn-sm btn-danger">REMOVE</a></td>
+                                        </tr>
+                                        {% endif %}
+                                    {% endif %}
+								{% endfor %}
+                              
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <div class="cart__btn">
+                        <a href="{% url 'store' %}">Continue Shopping</a>
+                    </div>
+                </div>
+                
+            </div>
+            {% if cart_items %}
+                {% if has_active_items %}
+                    <div class="row">
+                        <div class="col-lg-8 offset-lg-2">
+                            <div class="cart__total__procced">
+                                <h6>Cart total</h6>
+                                <ul>
+                                    <li class="text-secondary">Subtotal <span>$ {{total}}</span></li>
+                                    <li class="text-secondary">Delivery Charge <span id="deliveryCharge">{% if delivery_charge > 0 %}$ {{delivery_charge}}{% else %} Free Delivery {% endif %}</span></li>
+                                    <li class="text-secondary">Total Amount <span id="grandtotal">$ {{grand_total}}</span></li>
+                                </ul>
+                                <a href="{% url 'checkout' %}" class="primary-btn text-white">Proceed to checkout</a>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <a class="primary-btn text-white" disabled>Proceed to checkout</a>
+                {% endif %}
+            {% else %}
+                <a class="primary-btn text-white" disabled>Proceed to checkout</a>
+            {% endif %}
+		{% endif %}
+
+        </div>
+    </section>
+    <!-- Shop Cart Section End -->
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+$(document).ready(function(){
+
+    // Add wishlist
+    $('.add-wishlist').on('click',function(e){
+        e.preventDefault(); 
+        var _pid=$(this).attr('data-product');
+        var _vm=$(this);
+        //Ajax
+        $.ajax({
+            url:"{% url 'add_wishlist' %}",
+            data:{
+                product:_pid
+            },
+            dataType:'json',
+            success:function(res){
+                if(res.bool==true){
+                    _vm.addClass('disabled').attr('disabled', 'disabled');
+                    $('#wishlist-message').show();
+                }
+            }
+                
+        });
+        //End Ajax
+        
+    });
+    //End wishlist
+});
+</script>
+
+</body>
+
+</html>
+{% endblock %}

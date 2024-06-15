@@ -1,0 +1,57 @@
+{% extends 'glam_admin/base.html' %}
+{% load static %}
+{% block content %}
+<body>
+<div class="container-fluid vw-100 d-flex flex-column" style="padding-right: 60px;">
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="page-header">
+        <h3 class="page-title">
+          <span class="page-title-icon bg-gradient-primary text-white me-2">
+            <i class="mdi mdi-puzzle"></i>
+          </span> Edit Variation
+        </h3>
+      </div>
+               
+      <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <form class="forms-sample" method="POST" action="{% url 'edit_variation' variation.id %}" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="form-group">
+                {% for message in messages %}
+                  <p class="text-danger"> {{message}}</p>
+                {% endfor %}
+                <label for="category">Product</label>
+                <select class="form-select" name="product" id="product">
+                  <option value="{{ variation.product.id }}" selected>{{ variation.product.product_name }}</option>
+                  {% for product in products %}
+                  <option value="{{ product.id }}">{{ product.product_name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group">
+                  <label for="category">Variation Category</label>
+                  <select class="form-select" name="variation_category" id="variation_category">
+                      <option value="{{variation.variation_category}}" selected>{{variation.variation_category}}</option>
+                      {% for category in variations_categories %}
+                      <option value="{{ category.variation_category }}">{{ category.variation_category }}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+
+              <div class="form-group">
+                  <label for="exampleInputName1">Variation Value</label>
+                  <input type="text" class="form-control" id="exampleInputName1" placeholder="Variation value" name="variation_value" value="{{variation.variation_value}}">
+              </div>
+              <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
+              <a class="btn btn-light" href="{% url 'variations' %}">Cancel</a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>              
+</body>
+{% endblock %}

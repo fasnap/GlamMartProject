@@ -1,0 +1,94 @@
+{% extends 'glam_admin/base.html' %}
+{% load static %}
+{% block content %}
+  <body>
+    <div class="container-fluid vw-100 d-flex flex-column" style="padding-right: 60px;">
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="page-header">
+              <h3 class="page-title">
+                <span class="page-title-icon bg-gradient-primary text-white me-2">
+                  <i class="mdi mdi-folder-outline"></i>
+                </span> Sub Category
+                
+              </h3>
+                    
+                    <div class="add-items d-flex">
+                    <a href="{% url 'add-subcategory' category_slug=category.slug %}">+ Add Sub Category</a>
+                    </div>
+            </div>
+            <div class="row">
+              <div class="col-12 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Sub Categories</h4>
+                    <div class="table-responsive">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th> Sub Category Name </th>
+                            <th> Image </th>
+                            <th>Offer %</th>
+                            <th> Edit</th>
+                            <th> Remove</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        
+                        {% for sub_category in sub_categories %}
+                         <tr>
+                            <td>{{sub_category.sub_category_name}}</td>
+
+                            <td>
+                            {% if sub_category.sub_category_image %}
+                              <img src="{{ sub_category.sub_category_image.url }}" class="me-2" alt="image">
+                            {% else %}
+                            No image available
+                            {% endif %}
+                            </td>
+                            <td>{{sub_category.subcategory_offer}}</td>
+                            <td> <a href="{% url 'edit-subcategory' sub_category.slug  %}"><i class="bi bi-pen text-primary"></i></a></td>
+                            {% if sub_category.is_active %}
+                            <td> <a href="{% url 'activate-inactivate-subcategory' sub_category.slug %}" onclick="return confirmInactivate('{% url 'activate-inactivate-subcategory' sub_category.slug %}')" ><i class="bi bi-x-diamond"></i> </a></td>
+                            {% else %}
+                            <td> <a href="{% url 'activate-inactivate-subcategory' sub_category.slug %}" onclick="return confirmActivate('{% url 'activate-inactivate-subcategory' sub_category.slug %}')"><i class="bi bi-x-diamond-fill"></i> </a></td>
+                            {% endif %}
+                          </tr>
+                           {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- content-wrapper ends -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+  
+  <script>
+    function confirmInactivate(url) {
+        if (confirm("Are you sure you want to inactivate the Sub category?")) {
+            window.location.href = url; 
+        } else {
+            window.location.href = "{% url 'sub-category' category_slug %}";
+        }
+        return false; 
+    }
+    function confirmActivate(url) {
+        if (confirm("Are you sure you want to activate the Sub category?")) {
+            window.location.href = url; 
+        } else {
+            window.location.href = "{% url 'sub-category' category_slug %}";
+        }
+        return false; 
+    }
+</script>
+  </body>
+</html>
+{% endblock %}

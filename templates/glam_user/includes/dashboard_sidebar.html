@@ -1,0 +1,29 @@
+{% load static %}
+<style>
+.list-group-item.active {
+    z-index: 2;
+    color: black;
+    background-color: #FFDEAD;
+    border-color: #FFDEAD;
+}
+</style>
+<aside class="col-lg-3 col-md-3">
+<!--   SIDEBAR   -->
+    <div class="card d-flex align-items-center">
+        <img id="profile_picture" class="card-img-top img-fluid" src="{% static 'glam_user/img/profile.jpg' %}" alt="Profile Image" style="height: 70px; width: 70px;">
+       						
+        <p class="card-text ml-2 mb-0">Hello,<b> {{user.username}}</b></p>
+    </div>
+    <ul class="list-group mt-3">
+        <a class="text-dark list-group-item {% if '/users/profile_information/' == request.path %}active{% endif %}" href="{% url 'profile-information' %}">Profile Information </a>
+        <a class="text-dark list-group-item {% if '/users/my_orders/' == request.path %}active{% endif %}" href="{% url 'my-orders' %}"> My Orders</a>
+        <a class="text-dark list-group-item {% if '/users/manage_address/' == request.path %}active{% endif %}" href="{% url 'manage-address' %}">Manage Address</a>
+        <a class="text-dark list-group-item {% if '/users/my_wallet/' == request.path %}active{% endif %}" href="{% url 'my_wallet' %}"> My Wallet </a>
+        <a class="text-dark list-group-item {% if '/users/wishlist/' == request.path %}active{% endif %}" href="{% url 'wishlist' %}"> Wishlist </a>
+        <a class="text-dark list-group-item {% if '/users/referral/' == request.path %}active{% endif %}" href="{% url 'referral' %}"> Referral </a>
+        <a class="text-dark list-group-item {% if '/users/change_password/' == request.path %}active{% endif %}" href="{% url 'change_password' %}"> Change Password </a>
+    </ul>
+    <br>
+    <a class="btn btn-info btn-block" href="#"> <i class="fas fa-power-off"></i> <span class="text">Log out</span> </a> 
+    <!--   SIDEBAR .//END   -->
+</aside>

@@ -1,0 +1,158 @@
+{% extends 'glam_admin/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container-fluid vw-100 d-flex flex-column" style="padding-right: 60px;">
+    <div class="main-panel flex-grow-1 d-flex flex-column">
+        <div class="content-wrapper flex-grow-1 d-flex flex-column">
+            <div class="row flex-grow-0">
+                <div class="col-md-12">
+                    <div class="page-header d-flex justify-content-between align-items-center">
+                        <h3 class="page-title d-flex align-items-center">
+                            <span class="page-title-icon bg-gradient-primary text-white me-2">
+                                <i class="mdi mdi-package-variant-closed"></i>
+                            </span> Product
+                        </h3>
+
+                        <div class="col-md-6">
+                            <!-- Search form -->
+                            <form method="GET" action="{% url 'product' %}" class="d-flex">
+                                <input class="form-control me-2" type="search" placeholder="Search products" aria-label="Search" name="q">
+                                <button class="btn btn-outline-primary" type="submit">Search</button>
+                            </form>
+                        </div>
+
+                        <div class="add-items d-flex">
+                            <a href="{% url 'add-product' %}" class="btn btn-primary">+ Add Product</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row flex-grow-1">
+                <div class="col-md-12 h-100">
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column">
+                            <h4 class="card-title">Products</h4>
+                            <div class="table-responsive flex-grow-1">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th> Product Name </th>
+                                            <th>Product Offer</th>
+                                            <th> Actual Price </th>
+                                            <th> Applied Offer % </th>
+                                            <th> Offer Price </th>
+                                            <th> Stock </th>
+                                            <th> Category </th>
+                                            <th> Subcategory </th>
+                                            <th> Image1 </th>
+                                            <th> Edit </th>
+                                            <th> Delete </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if products %}
+                                            {% for product in products %}
+                                            <tr>
+                                                <td>{{ product.product_name }}</td>
+                                                <td>{{ product.product_offer }}</td>
+                                                <td>{{ product.actual_price }}</td>
+                                                <td>{{ product.offer }}</td>
+                                                <td>{{ product.offer_price }}</td>
+                                                <td>{{ product.stock }}</td>
+                                                <td>{{ product.category.category_name }}</td>
+                                                <td>{{ product.sub_category.sub_category_name }}</td>
+                                                <td>
+                                                    <img src="{{ product.product_image1.url }}" class="me-2" alt="image" style="width: 50px; height: 50px;">
+                                                </td>
+                                                <td>
+                                                    <a href="{% url 'edit_product' product.slug %}"><i class="bi bi-pen text-primary"></i></a>
+                                                </td>
+                                                {% if product.is_available %}
+                                                <td>
+                                                    <a href="{% url 'activate_inactivate_product' product.slug %}" onclick="return confirmInactivate('{% url 'activate_inactivate_product' product.slug %}')">Inactivate</a>
+                                                </td>
+                                                {% else %}
+                                                <td>
+                                                    <a href="{% url 'activate_inactivate_product' product.slug %}" onclick="return confirmActivate('{% url 'activate_inactivate_product' product.slug %}')">Activate</a>
+                                                </td>
+                                                {% endif %}
+                                            </tr>
+                                            {% endfor %}
+                                        {% else%}
+                                            <tr>
+                                                <td colspan="11">No products found.</td>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <nav class="mt-4" aria-label="Page navigation sample">
+                        {% if products.has_other_pages %}
+                        <ul class="pagination justify-content-center">
+                            {% if products.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link px-3 py-2" href="?page={{products.previous_page_number}}{% if query %}&q={{ query }}{% endif %}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link px-3 py-2" aria-hidden="true">&laquo;</span>
+                            </li>
+                            {% endif %}
+
+                            {% for i in products.paginator.page_range %}
+                            {% if products.number == i %}
+                            <li class="page-item active"><a class="page-link px-3 py-2" href="#">{{i}}</a></li>
+                            {% else %}
+                            <li class="page-item"><a class="page-link px-3 py-2" href="?page={{i}}{% if query %}&q={{ query }}{% endif %}">{{i}}</a></li>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if products.has_next %}
+                            <li class="page-item">
+                                <a class="page-link px-3 py-2" href="?page={{products.next_page_number}}{% if query %}&q={{ query }}{% endif %}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link px-3 py-2" aria-hidden="true">&raquo;</span>
+                            </li>
+                            {% endif %}
+                        </ul>
+                        {% endif %}
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <!-- content-wrapper ends -->
+    </div>
+    <!-- main-panel ends -->
+</div>
+<!-- page-body-wrapper ends -->
+<!-- container-scroller ends -->
+
+<script>
+function confirmInactivate(url) {
+    if (confirm("Are you sure you want to inactivate the product?")) {
+        window.location.href = url; 
+    } else {
+        window.location.href = "{% url 'product' %}";
+    }
+    return false; 
+}
+function confirmActivate(url) {
+    if (confirm("Are you sure you want to activate the product?")) {
+        window.location.href = url; 
+    } else {
+        window.location.href = "{% url 'product' %}";
+    }
+    return false; 
+}
+</script>
+{% endblock %}

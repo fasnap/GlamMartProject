@@ -1,0 +1,73 @@
+{% extends 'glam_user/base.html' %}
+{% load static %}
+{% block content %}
+<body>
+    <section class="shop-cart spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="card-body text-left">
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                            <img src="{% static 'glam_user/img/order_success.jpg' %}" class="img-fluid" style="height: 100px; width: auto;" alt="Order Success">
+                                        </div>
+                                        <div class="col-lg-9 d-flex align-items-center">
+                                            <h4 class="card-text mb-3 text-success">Order Placed for $ {{order.order_total}} <br><p>Your item will be delivered by <b>Wed, May 22nd '24.</b></p></h4> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 border border-light">
+                                <div class="card-body text-right">
+                                    <h5 class="mb-4">Why call? Just click!</h5>
+                                    <p>Easily track all your GlamMart orders!</p>
+                                    <a href="{% url 'my-orders' %}" class="btn btn-primary">My Orders</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="my-4"></div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="card-body text-left">
+                                    <div class="row">
+                                        <div class="d-flex align-items-center">
+                                            <p><b>Delivery Address</b><br>
+                                           <b> {{order.address.full_name}}, </b><br><br>
+                                            {{order.address.full_address}},
+                                            {{order.address.city}},
+                                            {{order.address.state}},
+                                            {{order.address.country}}<br><br>
+                                            <b>Phone Number : </b> {{order.address.phone_number}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 border border-light">
+                                <div class="card-body">
+                                   
+                                </div>
+                            </div>
+                            <div class="col-lg-5 border border-light">
+                                <div class="card-body">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</body>
+{% endblock %}

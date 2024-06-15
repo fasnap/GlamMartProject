@@ -1,0 +1,136 @@
+{% extends 'glam_user/base.html' %}
+{% load static %}
+{% block content %}
+<style>
+    /* Custom styling to remove button appearance */
+    .btn-icon {
+        border: none;
+        background-color: transparent;
+        padding: 0;
+    }
+    body{
+        background-color: #F5F5F5;
+    }
+	.faq-section {
+        margin-top: 40px;
+    }
+    .faq-section h6 {
+        font-weight: bold;
+    }
+    .faq-section p {
+        margin-bottom: 15px;
+    }
+    .form-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    }
+    
+</style>
+<body>
+    <!-- ========================= SECTION CONTENT ========================= -->
+    <section class="section-conten padding-y bg">
+        <div class="container">
+            <div class="row mt-4">
+                {% include 'glam_user/includes/dashboard_sidebar.html' %}
+                <main class="col-md-9">
+
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="form-row mt-3 justify-content-center align-items-center">
+                                        <div>
+                                            <img src="{% static 'glam_user/img/wallet.png' %}" class="img-fluid" style="height: 100px; width: auto;">
+                                        </div>
+                                        <div class="text-center">
+                                            <h5><strong>GlamMart Wallet </strong></h5>
+                                            <p>A quick and convenient way to pay and refund</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="form-row mt-3">
+                                        <h5 class="text-dark">Balance Amount<br></h5>
+                                        <h4 classy="text-success"><br><strong>${{user_wallet.balance}}</strong></h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <!-- Instant Checkout -->
+                                        <div class="col-md-6 text-center">
+                                            <i class="fa fa-shopping-bag text-secondary" style="font-size: 25px; display: block; margin-bottom: 10px;"></i>
+                                            <p class="small text-muted"><strong>INSTANT CHECKOUT</strong><br>
+                                            One-click, easy and fast checkout</p>
+                                        </div>
+                                        <!-- Faster Refunds -->
+                                        <div class="col-md-6 text-center">
+                                            <i class="fas fa-stream text-secondary" style="font-size: 25px; display: block; margin-bottom: 10px;"></i>
+                                            <p class="small text-muted"><strong>FASTER REFUNDS</strong><br>
+                                            Get instant refunds as Myntra Credit</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <!-- Consolidated Money -->
+                                        <div class="col-md-6 text-center">
+                                            <i class="fas fa-money-check-alt text-secondary" style="font-size: 25px; display: block; margin-bottom: 10px;"></i>
+                                            <p class="small text-muted"><strong>CONSOLIDATED MONEY</strong><br>
+                                            Refunds and cashbacks in one place</p>
+                                        </div>
+                                        <!-- Many More Benefits -->
+                                        <div class="col-md-6 text-center">
+                                            <i class="fas fa-tags text-secondary" style="font-size: 25px; display: block; margin-bottom: 10px;"></i>
+                                            <p class="small text-muted"><strong>MANY MORE BENEFITS</strong><br>
+                                            Benefits and offers on using Myntra Credit</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">WALLET TRANSACTION HISTORY</h5>
+                                    <ul class="list-group">
+                                        {% for transaction in user_transactions %}
+                                            <li class="list-group-item">
+                                                <span class="small">{{ transaction.timestamp }}</span>
+                                                <span class="ml-5 small text-muted">{{ transaction.description }}</span>
+                                                <span class="float-right text-success"><strong> + {{ transaction.amount }}</strong></span>
+                                            </li>
+                                        {% empty %}
+                                            <li class="list-group-item">No transactions found.</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div> <!-- row.// -->
+			{% for message in messages %}
+			{{message}}
+			{% endfor %}
+        </div>
+    </section>
+    <!-- ========================= SECTION CONTENT END// ========================= -->
+</body>
+</html>
+{% endblock %}

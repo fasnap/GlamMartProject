@@ -1,0 +1,172 @@
+{% extends 'glam_admin/base.html' %}
+{% load static %}
+{% block content %}
+<body>
+<div class="container-fluid vw-100 d-flex flex-column" style="padding-right: 60px;">
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="page-header">
+        <h3 class="page-title">
+          <span class="page-title-icon bg-gradient-primary text-white me-2">
+            <i class="mdi mdi-cart"></i>
+          </span> Orders
+        </h3> 
+        <div class="col-md-6">
+          <!-- Search form -->
+          <form method="GET" action="{% url 'orders' %}" class="d-flex">
+              <input class="form-control me-2" type="search" placeholder="Search products" aria-label="Search" name="q">
+              <button class="btn btn-outline-primary" type="submit">Search</button>
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 grid-margin">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Orders</h4>
+              <div class="table-responsive">
+                <table class="table table-bordered ">
+                  <thead>
+                    <tr>
+                      <th> Order Number </th>
+                      <th> Ordered User </th>
+                      <th> Payment Method </th>
+                      <th> Delivery Address</th>
+                      <th> Order Note </th>
+                      <th> Delivery Charge </th>
+                      <th> Discount </th>
+                      <th> Total  </th>
+                      <th>Payment Status</th>
+                      <th> Date </th>
+                      <th> Status </th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for order in orders %}
+                    <tr>
+                      <td><a href="{% url 'orders-detail' order.order_number %}">{{order.order_number}}</a></td>
+                      <td>{{order.user.username}}</td>
+                      <td>{{order.payment.payment_method}}</td>
+                      <td>{{order.address.full_address}}</td>
+                      {% if order.order_note %}
+                      <td>{{order.order_note}}</td>
+                      {% else %}
+                      <td>No notes</td>
+                      {% endif %}
+                      <td>{{order.delivery_charge}}</td>
+                      <td>{{order.discount}}</td>
+                      <td>{{order.order_total}}</td>
+                      <td>{{order.payment.status}}</td>
+                      <td>{{order.created_at}}</td>
+                      <td>
+                          <span class="current-status">{{ order.get_status_display }}</span>
+                          <select class="status-dropdown" data-order-id="{{ order.id }}" style="display: none;">
+                              {% for key, value in order.STATUS %}
+                              <option value="{{ key }}" {% if key == order.status %}selected{% endif %}>{{ value }}</option>
+                              {% endfor %}
+                          </select>
+                      </td>
+                      <td>
+                          <button class="edit-status-btn">Update Status</button>
+                          <button class="save-status-btn" style="display: none;">Save</button>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <nav class="mt-4" aria-label="Page navigation sample">
+            {% if orders.has_other_pages %}
+            <ul class="pagination justify-content-center">
+                {% if orders.has_previous %}
+                <li class="page-item">
+                    <a class="page-link px-3 py-2" href="?page={{orders.previous_page_number}}{% if query %}&q={{ query }}{% endif %}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link px-3 py-2" aria-hidden="true">&laquo;</span>
+                </li>
+                {% endif %}
+
+                {% for i in orders.paginator.page_range %}
+                {% if orders.number == i %}
+                <li class="page-item active"><a class="page-link px-3 py-2" href="#">{{i}}</a></li>
+                {% else %}
+                <li class="page-item"><a class="page-link px-3 py-2" href="?page={{i}}{% if query %}&q={{ query }}{% endif %}">{{i}}</a></li>
+                {% endif %}
+                {% endfor %}
+
+                {% if orders.has_next %}
+                <li class="page-item">
+                    <a class="page-link px-3 py-2" href="?page={{orders.next_page_number}}{% if query %}&q={{ query }}{% endif %}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link px-3 py-2" aria-hidden="true">&raquo;</span>
+                </li>
+                {% endif %}
+            </ul>
+            {% endif %}
+          </nav>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.edit-status-btn').forEach(function(button) {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                row.querySelector('.current-status').style.display = 'none';
+                row.querySelector('.status-dropdown').style.display = 'inline';
+                this.style.display = 'none';
+                row.querySelector('.save-status-btn').style.display = 'inline';
+            });
+        });
+
+        document.querySelectorAll('.save-status-btn').forEach(function(button) {
+            button.addEventListener('click', function() {
+                const row = this.closest('tr');
+                const dropdown = row.querySelector('.status-dropdown');
+                const orderId = dropdown.getAttribute('data-order-id');
+                const newStatus = dropdown.value;
+
+                fetch("{% url 'update_status' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        order_id: orderId,
+                        status: newStatus
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        row.querySelector('.current-status').textContent = data.new_status;
+                        row.querySelector('.current-status').style.display = 'inline';
+                        dropdown.style.display = 'none';
+                        this.style.display = 'none';
+                        row.querySelector('.edit-status-btn').style.display = 'inline';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+  </script>
+</body>
+</html>
+{% endblock %}

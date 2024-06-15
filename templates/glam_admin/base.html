@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>GlamMart Admin</title>
+    <!-- Link to Bootstrap CSS via CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="{%static 'glam_admin/vendors/mdi/css/materialdesignicons.min.css' %}">
+    <link rel="stylesheet" href="{%static 'glam_admin/vendors/ti-icons/css/themify-icons.css' %}">
+    <link rel="stylesheet" href="{%static 'glam_admin/vendors/css/vendor.bundle.base.css' %}">
+    <link rel="stylesheet" href="{%static 'glam_admin/vendors/font-awesome/css/font-awesome.min.css' %}">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="{%static 'glam_admin/vendors/font-awesome/css/font-awesome.min.css' %}" />
+    <link rel="stylesheet" href="{%static 'glam_admin/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css' %}">
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <!-- endinject -->
+    <!-- Layout styles -->
+    <link rel="stylesheet" href="{%static 'glam_admin/css/style.css' %}">
+    <!-- End layout styles -->
+    <link rel="shortcut icon" href="{%static 'glam_admin/images/favicon.png' %}" />
+  </head>
+  <body>
+    <div class="container-scroller d-flex flex-column min-vh-100">
+      <!-- nav bar -->
+      {% include 'glam_admin/includes/navbar.html' %}
+      <div class="container-fluid page-body-wrapper flex-grow-1 d-flex">
+        <!-- side bar -->
+        {% include 'glam_admin/includes/sidebar.html' %}
+        <div class="main-panel flex-grow-1 d-flex flex-column">
+          <div class="content-wrapper flex-grow-1">
+            {% block content %}
+            <!-- load content -->
+            {% endblock %}
+          </div>
+          <!-- footer -->
+          {% include 'glam_admin/includes/footer.html' %}
+        </div>
+      </div>
+    </div>
+
+    <!-- plugins:js -->
+    <script src="{%static 'glam_admin/vendors/js/vendor.bundle.base.js' %}"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="{%static 'glam_admin/vendors/chart.js/chart.umd.js' %}"></script>
+    <script src="{%static 'glam_admin/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js' %}"></script>
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="{%static 'glam_admin/js/off-canvas.js' %}"></script>
+    <script src="{%static 'glam_admin/js/misc.js' %}"></script>
+    <script src="{%static 'glam_admin/js/settings.js' %}"></script>
+    <script src="{%static 'glam_admin/js/todolist.js' %}"></script>
+    <script src="{%static 'glam_admin/js/jquery.cookie.js' %}"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page -->
+    <script src="{%static 'glam_admin/js/dashboard.js' %}"></script>
+    <!-- End custom js for this page -->
+    </body>
+  </html>

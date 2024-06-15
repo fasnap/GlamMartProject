@@ -1,0 +1,153 @@
+<!-- sales_report.html -->
+{% extends 'glam_admin/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="GET">
+                        <div class="form-group row">
+                            <label for="date_range" class="col-md-4 col-form-label text-md-right">Date Range:</label>
+                            <div class="col-md-6">
+                                <select id="date_range" name="date_range" class="form-control">
+                                    <option value="" selected>select</option>
+                                    <option value="till_now" {% if date_range == 'till_now' %}selected{% endif %}>Till Now</option>
+                                    <option value="today" {% if date_range == 'today' %}selected{% endif %}>Today</option>
+                                    <option value="weekly" {% if date_range == 'weekly' %}selected{% endif %}>Weekly</option>
+                                    <option value="monthly" {% if date_range == 'monthly' %}selected{% endif %}>Monthly</option>
+                                    <option value="yearly" {% if date_range == 'yearly' %}selected{% endif %}>Yearly</option>
+                                    <option value="custom" {% if date_range == 'custom' %}selected{% endif %}>Custom Range</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row date-inputs" {% if date_range != 'custom' %}style="display:none;"{% endif %}>
+                            <label for="start_date" class="col-md-4 col-form-label text-md-right">Start Date:</label>
+                            <div class="col-md-6">
+                                <input type="date" id="start_date" name="start_date" value="{{ start_date }}" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row date-inputs" {% if date_range != 'custom' %}style="display:none;"{% endif %}>
+                            <label for="end_date" class="col-md-4 col-form-label text-md-right">End Date:</label>
+                            <div class="col-md-6">
+                                <input type="date" id="end_date" name="end_date" value="{{ end_date }}" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row mb-0">
+                            <div class="col-md-6 offset-md-4">
+                                <button type="submit" class="btn btn-primary">Filter</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF and EXCEL Download Button -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-end">
+                <form method="GET" action="{% url 'download_sales_report_pdf' %}" style="margin-right: 10px;">
+                    <input type="hidden" name="date_range" value="{{ date_range }}">
+                    <input type="hidden" name="start_date" value="{{ start_date }}">
+                    <input type="hidden" name="end_date" value="{{ end_date }}">
+                    <button id="download-pdf-btn" type="submit" class="btn btn-success">Download PDF</button>
+                </form>
+                <form method="GET" action="{% url 'download_sales_report_excel' %}">
+                    <input type="hidden" name="date_range" value="{{ date_range }}">
+                    <input type="hidden" name="start_date" value="{{ start_date }}">
+                    <input type="hidden" name="end_date" value="{{ end_date }}">
+                    <button id="download-excel-btn" type="submit" class="btn btn-success">Download Excel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">Overall Details</div>
+                <div class="card-body">
+                    <p>Overall Sales Count : {{ total_orders_count }}</p>
+                    <p>Overall Success Order Amount : {{ total_success_order_amount }}</p>
+                    <p>Overall Discount : {{ total_discount_amount }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">Sales Report</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Order Number</th>
+                                    <th>User</th>
+                                    <th>Date</th>
+                                    <th>Paid Amount</th>
+                                    <th>Delivery Charge</th>
+                                    <th>Discount Amount</th>
+                                    <th>Payment Status</th>
+                                    <th>Payment Method</th>
+                                    <th>Order Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                <tr>
+                                    <td>{{ order.order_number }}</td>
+                                    <td>{{ order.user.username }}</td>
+                                    <td>{{ order.created_at|date:"d-M-Y"}}</td>
+                                    <td>{{ order.order_total }}</td>
+                                    <td>{{ order.delivery_charge }}</td>
+                                    <td>{{ order.discount }}</td>
+                                    <th>{{ order.payment.status }}</th>
+                                    <th>{{ order.payment.payment_method }}</th>
+                                    <td>{{ order.status }}</td>
+                                    <!-- Add more table data cells if needed -->
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .date-inputs {
+        display: none;
+    }
+</style>
+
+<script>
+    document.getElementById('date_range').addEventListener('change', function() {
+        var dateInputs = document.querySelectorAll('.date-inputs');
+        if (this.value === 'custom') {
+            dateInputs.forEach(function(input) {
+                input.style.display = 'block';
+            });
+        } else {
+            dateInputs.forEach(function(input) {
+                input.style.display = 'none';
+            });
+        }
+    });
+
+     document.getElementById('download-pdf-btn').addEventListener('click', function() {
+        const dateRange = document.querySelector('input[name="date_range"]').value;
+        const startDate = document.querySelector('input[name="start_date"]').value;
+        const endDate = document.querySelector('input[name="end_date"]').value;
+        const url = `/download_sales_report_pdf/?date_range=${dateRange}&start_date=${startDate}&end_date=${endDate}`;
+        window.location.href = url;
+    });
+</script>
+
+{% endblock %}

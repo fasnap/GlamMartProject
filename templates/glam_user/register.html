@@ -1,0 +1,213 @@
+{% extends 'glam_user/base.html' %}
+{% load static %}
+{% block content %}
+<style>
+.card {
+	background-color: rgba(255, 255, 255, 0.9);
+	border-radius: 15px;
+	box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.card-title {
+	font-weight: bold;
+	color: #343a40;
+}
+.btn-primary {
+	border-radius: 30px;
+	background-color: #007bff;
+	border: none;
+}
+.btn-primary:hover {
+	background-color: #0056b3;
+}
+.invalid-feedback {
+	display: block;
+}
+</style>
+<body style="background: url('{% static 'glam_user/img//background/6.avif' %}') no-repeat center center fixed; background-size: cover;">
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y">
+
+<!-- ============================ COMPONENT REGISTER   ================================= -->
+	<div class="row justify-content-center">
+		<div class="col-md-8">
+			<div class="card mx-auto mt-3">
+			<article class="card-body">
+				<header class="mb-4"><h4 class="card-title">Sign up</h4></header>
+					<form method="POST" action="{% url 'user-register' %}" id="register-form">
+					{% csrf_token %}
+						<div class="form-row">
+							<div class="col form-group">
+								<label class="mb-3 mt-3">First name</label>
+								{{ form.first_name }}
+							</div> <!-- form-group end.// -->
+							<div class="col form-group">
+								<label class="mb-3 mt-3">Last name</label>
+								{{form.last_name}}
+							</div> <!-- form-group end.// -->
+						</div> <!-- form-row end.// -->
+						<div class="form-group">
+							<label class="mb-3 mt-3">Email</label>
+							{{form.email}}
+							<small class="form-text text-muted">We'll never share your email with anyone else.</small>
+						</div> <!-- form-group end.// -->
+						<div class="form-group">
+							<label class="mb-3 mt-3">Username</label>
+							{{form.username}}
+						</div> <!-- form-group end.// -->
+						<div class="form-group">
+							<label class="mb-3 mt-3">Phone</label>
+							{{form.phone_number}}
+						</div> <!-- form-group end.// -->
+						<div class="form-row">
+							<div class="form-group col-md-6">
+								<label class="mb-3 mt-3">Create password</label>
+								{{form.password}}
+							</div> <!-- form-group end.// --> 
+							<div class="form-group col-md-6">
+								<label class="mb-3 mt-3">Repeat password</label>
+								{{form.confirm_password}}
+							</div> <!-- form-group end.// -->  
+						</div>
+						<div class="form-group">
+							<button type="submit" class="btn btn-primary btn-block mt-3"> Register  </button>
+
+						</div> <!-- form-group// -->  
+						<p class="text-center mt-4">Have an account? <a href="{% url 'user-login' %}">Log In</a></p>    
+						{% if form_errors %}
+						<div class="alert alert-danger">
+							<strong>Error!</strong>
+								<ul>
+									{% for field_errors in form_errors.values %}
+									{% for error in field_errors %}
+									<li>{{ error }}</li>
+									{% endfor %}
+									{% endfor %}
+								</ul>
+						</div>
+						{% endif %}
+					</form>
+				</article><!-- card-body.// -->
+			</div> <!-- card .// -->
+		</div>
+	</div>
+    <br><br>
+<!-- ============================ COMPONENT REGISTER  END.// ================================= -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+<script>
+$(document).ready(function(){
+	$.validator.addMethod("noSpace", function(value, element) { 
+        return value == '' || (value.trim().indexOf(' ') == -1 && value.trim() == value); 
+    }, "No spaces are allowed.");
+
+	$.validator.addMethod("lettersOnly", function(value, element){
+		return this.optional(element) || /^[a-zA-Z]+$/.test(value);
+	}), "Only letters are allowed";
+
+	$.validator.addMethod("strictEmail", function(value, element) {
+        return this.optional(element) || /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
+    }, "Please enter a valid email address.");
+
+	$.validator.addMethod("validPhone", function(value, element) {
+        return this.optional(element) || /^\d{10}$/.test(value);
+    },"Please enter a valid 10-digit phone number.");
+
+	$.validator.addMethod("validPassword", function(value, element) {
+        return this.optional(element) || /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{5,}$/.test(value);
+    },"Password must be at least 5 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
+
+
+	$('#register-form').validate({
+		rules: {
+			first_name:{
+				required: true,
+				minlength: 3,
+				noSpace: true,
+				lettersOnly: true,
+			},
+			last_name:{
+				required: true,
+				minlength: 1,
+				noSpace: true,
+				lettersOnly: true,
+			},
+			username:{
+				required: true,
+				minlength: 4,
+				noSpace: true,
+				lettersOnly: true,
+			},
+			email:{
+				required: true,
+				email: true,
+				strictEmail: true,
+				noSpace: true,
+			},
+			phone_number:{
+				validPhone: true
+			},
+			password:{
+				required: true,
+				validPassword: true
+			},
+			confirm_password:{
+				required:true,
+				equalTo:"#id_password",
+			}
+
+		},
+		messages: {
+			first_name:{
+				required: "Please enter your first name",
+				minlength: "First name must be at least 3 characters long",
+				noSpace: "First name must not contain spaces",
+				lettersOnly: "First name must contain only letters"
+			},
+			last_name:{
+				required: "Please enter your last name",
+				minlength: "Last name must be at least 1 characters long",
+				noSpace: "Last name must not contain spaces",
+				lettersOnly: "Last name must contain only letters"
+			},
+			username:{
+				required: "Please enter your username",
+				minlength: "Username must be at least 4 characters long",
+				noSpace: "Username must not contain spaces",
+				lettersOnly: "Username must contain only letters"
+			},
+			email:{
+				required: "Please enter your email",
+				noSpace: "Email must not contain spaces",
+				email: "Please enter a valid email address",
+				strictEmail: "Please enter a valid email address"
+			},
+			phone_number:{
+				validPhone: "Please enter a valid 10-digit phone number"
+			},
+			password: {
+                required: "Please enter your password",
+                validPassword: "Password must be at least 5 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+            },
+            confirm_password: {
+                required: "Please confirm your password",
+                equalTo: "Passwords do not match"
+            }
+		},
+		errorElement: 'div',
+        errorPlacement: function(error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        },
+        highlight: function(element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function(element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        }
+	});
+});
+</script>
+</body>
+</html>
+{% endblock %}

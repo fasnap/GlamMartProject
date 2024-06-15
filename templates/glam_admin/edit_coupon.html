@@ -1,0 +1,89 @@
+{% extends 'glam_admin/base.html' %}
+{% load static %}
+{% block content %}
+  <body>
+  <div class="container-fluid vw-100 d-flex flex-column" style="padding-right: 60px;">
+    <div class="main-panel">
+      <div class="content-wrapper">
+        <div class="page-header">
+          <h3 class="page-title">
+            <span class="page-title-icon bg-gradient-primary text-white me-2">
+              <i class="mdi mdi-ticket-percent"></i>
+            </span> 
+            Edit Coupon
+          </h3>
+        </div>
+        <div class="row">
+          <div class="col-12 grid-margin stretch-card">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">Edit Coupon</h4>
+                <form class="forms-sample" method="POST" action="{% url 'edit_coupon' coupon.id %}" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="form-group">
+                    <label for="code">Coupon Code</label>
+                    {{ form.code }}
+                  </div>
+                  <div class="form-group">
+                    <label for="code">Coupon Name</label>
+                    {{ form.coupon_name }}
+                  </div>
+                  <div class="form-group">
+                    <label for="discount">Discount %</label>
+                    {{ form.discount }}
+                  </div>
+                  <div class="form-group">
+                    <label for="valid_from">Valid From</label>
+                    {{ form.valid_from }}
+                  </div>
+                  <div class="form-group">
+                    <label for="valid_to">Valid To</label>
+                    {{ form.valid_to }}
+                  </div>
+                  <div class="d-flex">
+                    <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
+                    <a href="{% url 'coupons' %}" class="btn btn-light">Cancel</a>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <h6 class="text-danger">{{message}}</h6>
+                        {% endfor %}
+                    {% endif %}
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- content-wrapper ends -->
+    </div>
+    <!-- main-panel ends -->
+  </body>
+</html>
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    .form-group label {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .form-control {
+      border-radius: 5px;
+      padding: 10px;
+      margin-bottom: 15px;
+      font-size: 1rem;
+      border: 1px solid #ced4da;
+    }
+    .btn {
+      padding: 10px 20px;
+      font-size: 1rem;
+    }
+  </style>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    // Additional JavaScript if needed
+  </script>
+{% endblock %}

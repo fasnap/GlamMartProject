@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Ashion Template">
+    <meta name="keywords" content="Ashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ashion | Template</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
+    <!-- Bootstrap Icons CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.7.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Font -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="{% static 'glam_user/css/bootstrap.min.css' %}" type="text/css"> 
+    <link rel="stylesheet" href="{% static 'glam_user/css/font-awesome.min.css' %}" type="text/css"> 
+    <link rel="stylesheet" href="{% static 'glam_user/css/elegant-icons.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'glam_user/css/jquery-ui.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'glam_user/css/magnific-popup.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'glam_user/css/owl.carousel.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'glam_user/css/slicknav.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'glam_user/css/style.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'glam_user/css/custom.css' %}" type="text/css"> 
+    <!-- paypal script -->
+    <script src="https://www.paypal.com/sdk/js?client-id=Ae5lSi1gwzRnBpG2fYsv6Efn2Kmo3ZIVJAcG2wpOgnPdlaFF9W4haeft9O7zxpNaUHd5w_LoMKwPTuXW&currency=USD"></script>
+</head>
+
+<body>
+    {% include 'glam_user/includes/navbar.html' %}
+
+    {% block content %}
+    {% endblock %}
+
+    {% include 'glam_user/includes/footer.html' %}
+
+    <!-- Js Plugins -->
+    <script src="{% static 'glam_user/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'glam_user/js/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'glam_user/js/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'glam_user/js/mixitup.min.js' %}"></script>
+    <script src="{% static 'glam_user/js/jquery.countdown.min.js' %}"></script>
+    <script src="{% static 'glam_user/js/jquery.slicknav.js' %}"></script>
+    <script src="{% static 'glam_user/js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'glam_user/js/jquery.nicescroll.min.js' %}"></script>
+    <script src="{% static 'glam_user/js/main.js' %}"></script>
+    <script src="{% static 'glam_user/js/popper.min.js' %}"></script>
+</body>
+
+</html>

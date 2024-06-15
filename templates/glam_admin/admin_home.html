@@ -1,0 +1,347 @@
+{% extends 'glam_admin/base.html' %}
+{% load static %}
+{% block content %}
+<body>
+    <div class="container-fluid vw-100 d-flex flex-column" style="padding-right: 60px;">
+        <div class="container-fluid page-body-wrapper flex-grow-1 d-flex flex-column">
+            <div class="main-panel flex-grow-1 d-flex flex-column">
+                <div class="content-wrapper flex-grow-1">
+                    <div class="page-header">
+                        <h3 class="page-title">
+                            <span class="page-title-icon bg-gradient-primary text-white me-2">
+                                <i class="mdi mdi-home"></i>
+                            </span> Dashboard
+                        </h3>
+                        <nav aria-label="breadcrumb">
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item active" aria-current="page">
+                                    <span></span>Overview <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 stretch-card grid-margin">
+                            <div class="card bg-gradient-danger card-img-holder text-white">
+                                <div class="card-body text-center">
+                                    <img src="{% static 'glam_admin/images/dashboard/circle.svg' %}" class="card-img-absolute" alt="circle-image" />
+                                    <i class="mdi mdi-chart-line" style="font-size: 50px;"></i>
+                                    <h4 class="font-weight-normal mb-3">Total Sales</h4>
+                                    <h2>$ {{total_sales}}</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 stretch-card grid-margin">
+                            <div class="card bg-gradient-info card-img-holder text-white">
+                                <div class="card-body text-center">
+                                    <img src="{% static 'glam_admin/images/dashboard/circle.svg' %}" class="card-img-absolute" alt="circle-image" />
+                                    <i class="mdi mdi-clipboard-list" style="font-size: 50px;"></i>
+                                    <h4 class="font-weight-normal mb-3">Total Orders</h4>
+                                    <h2>{{total_orders}}</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 stretch-card grid-margin">
+                            <div class="card bg-gradient-success card-img-holder text-white">
+                                <div class="card-body text-center">
+                                    <img src="{% static 'glam_admin/images/dashboard/circle.svg' %}" class="card-img-absolute" alt="circle-image" />
+                                    <i class="mdi mdi-account" style="font-size: 50px;"></i>
+                                    <h4 class="font-weight-normal mb-3">Active Users</h4>
+                                    <h2>{{active_users}}</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 stretch-card grid-margin">
+                            <div class="card bg-gradient-primary card-img-holder text-white">
+                                <div class="card-body text-center">
+                                    <img src="{% static 'glam_admin/images/dashboard/circle.svg' %}" class="card-img-absolute" alt="circle-image" />
+                                    <i class="mdi mdi-cube-outline" style="font-size: 50px;"></i>
+                                    <h4 class="font-weight-normal mb-3">Total Products </h4>
+                                    <h2>{{total_products}}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 stretch-card grid-margin">
+                            <div class="card card-img-holder text-dark">
+                                <div class="card-body">
+                                    <img src="{% static 'glam_admin/images/dashboard/circle.svg' %}" class="card-img-absolute" alt="circle-image" />
+                                    <h4 class="font-weight-normal mb-3">Orders Delivered <i class="mdi mdi-truck-check float-end text-success" style="font-size: 40px;"></i></h4>
+                                    <h3> {{orders_delivered}}</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 stretch-card grid-margin">
+                            <div class="card text-dark card-img-holder">
+                                <div class="card-body">
+                                    <img src="{% static 'glam_admin/images/dashboard/circle.svg' %}" class="card-img-absolute" alt="circle-image" />
+                                    <h4 class="font-weight-normal mb-3">Ordered Shipped <i class="mdi mdi-truck-fast float-end text-info" style="font-size: 40px;"></i></h4>
+                                    <h3>{{orders_shipped}}</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 stretch-card grid-margin">
+                            <div class="card card-img-holder text-dark">
+                                <div class="card-body">
+                                    <img src="{% static 'glam_admin/images/dashboard/circle.svg' %}" class="card-img-absolute" alt="circle-image" />
+                                    <h4 class="font-weight-normal mb-3">Orders Cancelled <i class="mdi mdi-cancel float-end text-danger" style="font-size: 40px;"></i></h4>
+                                    <h3>{{orders_cancelled}}</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 stretch-card grid-margin">
+                            <div class="card card-img-holder text-dark">
+                                <div class="card-body">
+                                    <img src="{% static 'glam_admin/images/dashboard/circle.svg' %}" class="card-img-absolute" alt="circle-image" />
+                                    <h4 class="font-weight-normal mb-3"> Orders Returned <i class="mdi mdi-undo float-end text-warning" style="font-size: 40px;"></i></h4>
+                                    <h3>{{orders_returned}}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="clearfix">
+                                        <h4 class="card-title float-start">MONTHLY SALES</h4>
+                                        <div id="visit-monthly-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-end"></div>
+                                    </div>
+                                    <canvas id="monthly-sales-chart" width="380" height="180"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="clearfix">
+                                        <h4 class="card-title float-start">YEARLY SALES</h4>
+                                        <div id="visit-yearly-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-end"></div>
+                                    </div>
+                                    <canvas id="yearly-sales-chart" width="380" height="180"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    <div>
+                    <div class="row">
+                        <div class="col-md-6 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="clearfix">
+                                        <h4 class="card-title float-start">MOST SELLING PRODUCTS</h4>
+                                        <div id="visit-yearly-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-end"></div>
+                                    </div>
+                                    <canvas id="productChart" width="380" height="180"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                   <div class="clearfix">
+                                        <h4 class="card-title float-start">MOST SELLING SUBCATEGORY</h4>
+                                        <div id="visit-yearly-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-end"></div>
+                                    </div>
+                                    <canvas id="subcategoryChart" width="380" height="180"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-5 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body p-0 d-flex">
+                                    <div id="inline-datepicker" class="datepicker datepicker-custom"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-7 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title text-success"><strong>BEST SELLING SUB CATEGORIES</strong></h4>
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th> </th>
+                                                    <th> </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for subcategory in best_selling_subcategory %}
+                                                <tr>
+                                                    <td> {% if subcategory.sub_category_image %}<img src="{{subcategory.sub_category_image.url}}" class="me-2" alt="image">{% else %}<img src="{% static 'glam_admin/images/noimage/no_image.jpg' %}" class="me-2" alt="image">{% endif %}   {{subcategory.sub_category_name}} </td>
+                                                    <td>
+                                                        <h5 class="btn btn-light border-secondary float-end disabled">{{subcategory.num_orders}} Orders</h5>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="row">
+                        <div class="col-md-12 grid-margin stretch-card">
+                            <div class="card border border-secondary">
+                                <div class="card-body">
+                                    <h4 class="card-title text-success"><strong>BEST SELLING PRODUCTS</strong></h4>
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th> </th>
+                                                    <th> </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for product in best_selling_products %}
+                                                <tr>
+                                                    <td> <img src="{{product.product_image1.url}}" class="me-2" alt="image"> {{product.product_name}} </td>
+                                                    <td>
+                                                        <h5 class="btn btn-light border-secondary float-end disabled">{{product.num_orders}} Orders</h5>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <!-- content-wrapper ends -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const productLabels = {{ product_labels|safe }};
+const productData = {{ product_data|safe }};
+const subcategoryData = {{ subcategory_data|safe }};
+const subcategoryLabels = {{ subcategory_labels|safe }};
+
+const ctxProduct = document.getElementById("productChart").getContext("2d");
+
+new Chart(ctxProduct, {
+    type: "bar",
+    data: {
+        labels: productLabels,
+        datasets: [{
+            label: "Most Selling Products",
+            data: productData,
+            backgroundColor: 'rgba(255, 69, 0, 0.6)',
+            borderColor: 'rgba(150, 100, 255, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        title: {
+            text: 'Most Selling Products',
+            display: true
+        }
+    }
+});
+
+const ctxSubcategory=document.getElementById("subcategoryChart").getContext("2d");
+new Chart(ctxSubcategory, {
+    type: "bar",
+    data: {
+        labels: subcategoryLabels,
+        datasets: [{
+            label: "Most Selling Category",
+            data: subcategoryData,
+            backgroundColor: 'rgba(255, 215, 0, 0.6)',
+            borderColor: 'rgba(150, 100, 255, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        title: {
+            text: 'Most Selling Subcategory',
+            display: true
+        }
+    }
+});
+
+// Monthly sales bar chart
+const monthlyLabels = {{ monthly_labels|safe }};
+const monthlyData = {{ monthly_data|safe }};
+let monthlyCtx = document.getElementById('monthly-sales-chart').getContext('2d');
+
+let monthlyChart = new Chart(monthlyCtx, {
+    type: 'bar',
+    data: {
+        labels: monthlyLabels,
+        datasets: [{
+            label: 'Monthly Sales',
+            data: monthlyData,
+            backgroundColor: 'rgba(218, 112, 214, 0.6)',
+            borderColor: 'rgba(150, 100, 255, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        title: {
+            text: 'Monthly Sales',
+            display: true
+        }
+    }
+});
+
+// Yearlt sales bar chart
+const yearlyLabels = {{ yearly_labels|safe }};
+const yearlyData = {{ yearly_data|safe }};
+let yearlyCtx = document.getElementById('yearly-sales-chart').getContext('2d');
+
+let yearlyChart = new Chart(yearlyCtx, {
+    type: 'bar',
+    data: {
+        labels: yearlyLabels,
+        datasets: [{
+            label: 'Yearly Sales',
+            data: yearlyData,
+            backgroundColor: 'rgba(70, 192, 192, 0.6)',
+            borderColor: 'rgba(150, 100, 255, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        title: {
+            text: 'Yearly Sales',
+            display: true
+        }
+    }
+});
+</script>
+</body>
+{% endblock %}

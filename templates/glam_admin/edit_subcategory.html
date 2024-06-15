@@ -1,0 +1,63 @@
+{% extends 'glam_admin/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container-fluid vw-100 d-flex flex-column" style="padding-right: 60px;">
+    <div class="main-panel flex-grow-1">
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h3 class="page-title">
+                    <span class="page-title-icon bg-gradient-primary text-white me-2">
+                        <i class="mdi mdi-folder-outline"></i>
+                    </span> Edit Sub Category
+                </h3>
+            </div>
+            <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Edit Sub Category</h4>
+                        <form class="forms-sample" method="POST" action="{% url 'edit-subcategory' sub_category.slug %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="exampleInputName1">Sub Category Name</label>
+                                <input type="text" class="form-control" id="exampleInputName1" name="sub_category_name" value="{{ sub_category.sub_category_name }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleTextarea1">Description</label>
+                                <textarea class="form-control" id="exampleTextarea1" rows="4" name="description">{{ sub_category.description }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputName1">Sub Category Offer %</label>
+                                <input type="text" class="form-control" id="offer" name="subcategory_offer" value="{{ sub_category.subcategory_offer }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Sub Category Image</label>
+                                <div class="input-group col-xs-12">
+                                    <input type="file" class="form-control file-upload-info" placeholder="Upload Image" name="sub_category_image" onchange="previewImage(event)">
+                                </div>
+                                <img id="category-image-preview" class="mt-2" style="max-width: 200px;" src="{% if sub_category.sub_category_image %}{{ sub_category.sub_category_image.url }}{% endif %}">
+                            </div>
+                            <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
+                            <a href="{% url 'sub-category' category_slug=sub_category.category.slug %}" class="btn btn-light">Cancel</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- content-wrapper ends -->
+    </div>
+    <!-- main-panel ends -->
+</div>
+<!-- container-scroller ends -->
+
+<script>
+function previewImage(event) {
+    var input = event.target;
+    var preview = document.getElementById('category-image-preview');
+    var reader = new FileReader();
+    reader.onload = function() {
+        preview.src = reader.result;
+    }
+    reader.readAsDataURL(input.files[0]);
+}
+</script>
+{% endblock %}

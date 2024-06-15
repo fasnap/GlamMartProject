@@ -1,0 +1,43 @@
+
+{% extends 'glam_user/base.html' %}
+{% load static %}
+{% block content %}
+<body>
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y">
+
+<!-- ============================ COMPONENT REGISTER   ================================= -->
+	<div class="card mx-auto" style="max-width:520px; margin-top:40px;">
+      <article class="card-body">
+		<header class="mb-4"><h4 class="card-title">Otp Verification</h4></header>
+			<form method="POST" >
+			{% csrf_token %}
+			<div class="form-group">
+			 <input type="otp" class="form-control" placeholder="Enter otp" name="otp">
+              {% if otp_error %}
+             <p class="text-danger">Please enter an OTP.</p>
+             {% endif %}
+             {% for message in messages %}
+             <p class="text-danger">{{message}}</p>
+             {% endfor %}
+            </div> <!-- form-group// -->
+			    <div class="form-group">
+			        <button type="submit" class="btn btn-primary btn-block"> Verify OTP </button>
+			    </div> <!-- form-group// -->      
+			       <p class="text-center mt-4"><a href="{% url 'resend_otp' otp_id=otp_id  %}">Resend Otp</a></p> 
+			</form>
+		</article><!-- card-body.// -->
+    </div> <!-- card .// -->
+    <p class="text-center mt-4">Have an account? <a href="{% url 'user-login' %}">Log In</a></p>
+    <br><br>
+<!-- ============================ COMPONENT REGISTER  END.// ================================= -->
+
+
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+
+
+</body>
+</html>
+{% endblock %}

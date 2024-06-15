@@ -1,0 +1,443 @@
+{% extends 'glam_user/base.html' %}
+{% block content %}
+{% load static %}
+<body>
+<!-- Zoom CSS -->
+    <style>
+        #imageZoom1 {
+            border: 5px solid gray;
+            position: relative;
+        }
+
+        #imageZoom1 img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position:0 0;
+        }
+        #imageZoom1::after{
+            display: var(--display);
+            content: '';
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            background-image: var(--url);
+            background-size: 200%;
+            background-position: var(--zoom-x) var(--zoom-y);
+            position: absolute;
+            left: 0;
+            top: 0;
+            pointer-events: none;
+        }
+
+        #imageZoom2 {
+            border: 5px solid gray;
+            position: relative;
+        }
+
+        #imageZoom2 img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position:0 0;
+        }
+        #imageZoom2::after{
+            display: var(--display);
+            content: '';
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            background-image: var(--url);
+            background-size: 200%;
+            background-position: var(--zoom-x) var(--zoom-y);
+            position: absolute;
+            left: 0;
+            top: 0;
+            pointer-events: none;
+        }
+        
+        #imageZoom3 {
+            border: 5px solid gray;
+            position: relative;
+        }
+        #imageZoom3 img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position:0 0;
+        }
+        #imageZoom3::after{
+            display: var(--display);
+            content: '';
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            background-image: var(--url);
+            background-size: 200%;
+            background-position: var(--zoom-x) var(--zoom-y);
+            position: absolute;
+            left: 0;
+            top: 0;
+            pointer-events: none;
+        }
+    </style>
+    <!-- Breadcrumb Begin -->
+    <div class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__links">
+                        <a href="./index.html"><i class="fa fa-home"></i> Home</a>
+                        <a href="#">Women’s </a>
+                        <span>Essential structured blazer</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div id="wishlist-message" class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;">
+    The product has been added to your wishlist. <a href="{% url 'wishlist' %}" class="alert-link">View Wishlist</a>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+    <!-- Breadcrumb End -->
+<form method="POST" action="{% url 'add-cart' product.id %}">
+    {% csrf_token %}
+    <!-- Product Details Section Begin -->
+    <section class="product-details spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="product__details__pic">
+                        <div class="product__details__pic__left product__thumb nice-scroll">
+                            <a id="thumb1" class="pt active" href="#product-1">
+                                <img src="{{product.product_image1.url}}" class="small-image"alt="">
+                            </a>
+                            <a id="thumb2" class="pt" href="#product-2">
+                                <img src="{{product.product_image2.url}}" class="small-image" alt="">
+                            </a>
+                            <a id="thumb3" class="pt" href="#product-3">
+                                <img src="{{product.product_image3.url}}" class="small-image"alt="">
+                            </a>
+                          
+                        </div>
+                        <div class="product__details__slider__content">
+                            <div class="product__details__pic__slider owl-carousel">
+                                <div id="imageZoom1" style="--url: url({{ product.product_image1.url }}); --zoom-x: 0%; --zoom-y: 0%; --display: none">
+                                    <img id="mainImage1" class="product__big__img" data-hash="product-1" src="{{product.product_image1.url}}" alt="">
+                                </div>
+                                <div id="imageZoom2" style="--url: url({{ product.product_image2.url }}); --zoom-x: 0%; --zoom-y: 0%; --display: none">
+                                    <img id="mainImage2" data-hash="product-2" class="product__big__img" src="{{product.product_image2.url}}" alt="">
+                                </div>
+                                <div id="imageZoom3" style="--url: url({{ product.product_image3.url }}); --zoom-x: 0%; --zoom-y: 0%; --display: none">
+                                    <img id="mainImage3" data-hash="product-3" class="product__big__img" src="{{product.product_image3.url}}" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="product__details__text">
+                        <h3>{{product.product_name}}<span>Brand: SKMEIMore Men Watches from SKMEI</span></h3>
+                        <div class="rating-star text-warning">
+                            <span>
+                                <i class="fa fa-star{% if product.average_review < 0.5 %}-o{% elif product.average_review >= 0.5 and product.average_review < 1 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                <i class="fa fa-star{% if product.average_review < 1.5 %}-o{% elif product.average_review >= 1.5 and product.average_review < 2 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                <i class="fa fa-star{% if product.average_review < 2.5 %}-o{% elif product.average_review >= 2.5 and product.average_review < 3 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                <i class="fa fa-star{% if product.average_review < 3.5 %}-o{% elif product.average_review >= 3.5 and product.average_review < 4 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                <i class="fa fa-star{% if product.average_review < 4.5 %}-o{% elif product.average_review >= 4.5 and product.average_review < 5 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                <span class="text-dark">{{product.count_review}} reviews</span>
+                            </span>
+                        </div>
+                        
+
+                        <div class="product__details__price">$ {{product.offer_price}} <span><p>$ {{product.actual_price}}</p></span></div>
+                        
+                        <div class="product__details__button">
+                            {% if product.stock > 0 %}
+                              {% if product.is_available %}
+                                <button type="submit" class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</button>
+                              {% else %}
+                              <a  class="cart-btn"><span class="icon_bag_alt"></span> Not Available</a>
+                              {% endif %}
+                            {% else %}
+                              <a class="cart-btn"><span class="icon_bag_alt"></span> Out of stock </a>
+                            {% endif %} 
+                            <ul>
+                                {% if user.is_authenticated %}
+                                    <li><a href="#" class="btn btn-sm btn-danger add-wishlist" data-product="{{product.id}}"><span class="icon_heart_alt text-white"></span></a></li>
+                                {% else %}
+                                    <li><a href="#" class="btn btn-sm btn-danger disabled add-wishlist" data-product="{{product.id}}"><span class="icon_heart_alt"></span></a></li>
+                                {% endif %}
+                                <li><a href="#"><span class="icon_adjust-horiz"></span></a></li>
+                            </ul>
+                        </div>
+                        <div class="product__details__widget">
+                            <ul>
+                                <li>
+                                    <span>Choose color:</span>
+                                    <select name="color" class="form-control" required>
+                                        <option value="" disabled selected>Select</option>
+                                        {% for variation in product.variation_set.colors %}
+                                        <option value="{{ variation.variation_value | lower}}">{{ variation.variation_value | capfirst}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </li>
+                                <li>
+                                    <span>Select size:</span>
+                                    <select name="size" class="form-control">
+                                        <option value="" disabled selected>Select</option>
+                                        {% for variation in product.variation_set.sizes %}
+                                        <option value="{{variation.variation_value | lower}}">{{variation.variation_value | capfirst}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </li> 
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+</form>    
+                <div class="col-lg-12">
+                    <div class="product__details__tab">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab">Description</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tabs-2" role="tab">Reviews ( {{product.count_review}} )</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tabs-1" role="tabpanel">
+                                <h6>Description</h6>
+                                <p>{{product.description}}</p>
+                            </div>
+                            <div class="tab-pane" id="tabs-2" role="tabpanel">
+                                <div class="row">
+			                        <div class="col-md-9">
+                                        <form action="{% url 'submit_review' product.id %}" method="POST">
+                                        {% csrf_token %}
+                                            <h5>Write Your Review</h5><br>
+                                            
+                                            <div>
+                                                <!--- Rating stars -->
+                                                <label> How do you rate this product?</label>
+                                                <br>
+                                                <div class="rate">
+                                                    <input type="radio" name="rating" id="rating10" value="5" required/><label for="rating10" title="5"></label>
+                                                    <input type="radio" name="rating" id="rating9" value="4.5" required/><label for="rating9" title="4.5" class="half"></label>
+                                                    <input type="radio" name="rating" id="rating8" value="4" required/><label for="rating8" title="4"></label>
+                                                    <input type="radio" name="rating" id="rating7" value="3.5" required/><label for="rating7" title="3.5" class="half"></label>
+                                                    <input type="radio" name="rating" id="rating6" value="3" required/><label for="rating6" title="3"></label>
+                                                    <input type="radio" name="rating" id="rating5" value="2.5" required/><label for="rating5" title="2.5" class="half"></label>
+                                                    <input type="radio" name="rating" id="rating4" value="2" required/><label for="rating4" title="2"></label>
+                                                    <input type="radio" name="rating" id="rating3" value="1.5" required/><label for="rating3" title="1.5" class="half"></label>
+                                                    <input type="radio" name="rating" id="rating2" value="1" required/><label for="rating2" title="1"></label>
+                                                    <input type="radio" name="rating" id="rating1" value="0.5" required/><label for="rating1" title="0.5" class="half"></label>
+                                                </div>
+                                                <br>
+                                                Review title
+                                                <input type="text" class="form-control" name="subject">
+                                                <br>
+                                                Review
+                                                <textarea name="review" row="4" class="form-control"></textarea>
+                                                <br>
+                                                {% if user.is_authenticated %}
+                                                    {% if orderproduct %}
+                                                        <input type="submit" value="Submit Review" class="btn btn-primary">
+                                                    {% else %}
+                                                        <p>You must purchase the product to post a review</p>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <p>You must be logeed in to post a review<span><a href="{% url 'user-login' %}">Login now</a></span></p>
+                                                {% endif %}
+                                            </div>
+                                            {% include 'glam_user/includes/alerts.html' %}
+                                        </form>
+                                        <br>
+                                        <header class="section-heading">
+                                            <h4>Customer Reviews</h4>
+                                            <div class="rating-star text-warning">
+                                                <span>
+                                                    <i class="fa fa-star{% if product.average_review < 0.5 %}-o{% elif product.average_review >= 0.5 and product.average_review < 1 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                                    <i class="fa fa-star{% if product.average_review < 1.5 %}-o{% elif product.average_review >= 1.5 and product.average_review < 2 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                                    <i class="fa fa-star{% if product.average_review < 2.5 %}-o{% elif product.average_review >= 2.5 and product.average_review < 3 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                                    <i class="fa fa-star{% if product.average_review < 3.5 %}-o{% elif product.average_review >= 3.5 and product.average_review < 4 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                                    <i class="fa fa-star{% if product.average_review < 4.5 %}-o{% elif product.average_review >= 4.5 and product.average_review < 5 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                                    <span class="text-dark">{{product.count_review}} reviews</span>
+                                                </span>
+                                            </div>
+                                        </header>
+                                        {% for review in reviews %}
+                                        <article class="box mb-3">
+                                            <div class="Card">
+                                                <div class="card-body">
+                                                    <div class="icontext w-100">
+                                                        <div class="text">
+                                                            <span class="date text-muted float-md-right">{{review.updated_at}} </span>  
+                                                            <h6 class="mb-1">{{review.user.username}}</h6>
+                                                            <div class="rating-star text-warning">
+                                                                <span>
+                                                                    <i class="fa fa-star{% if review.rating == 0.5 %}-half-o{% elif review.rating < 1 %}-o {% endif %}" aria-hidden="true"></i> 
+                                                                    <i class="fa fa-star{% if review.rating == 1.5 %}-half-o{% elif review.rating < 2 %}-o {% endif %}" aria-hidden="true"></i> 
+                                                                    <i class="fa fa-star{% if review.rating == 2.5 %}-half-o{% elif review.rating < 3 %}-o {% endif %}" aria-hidden="true"></i> 
+                                                                    <i class="fa fa-star{% if review.rating == 3.5 %}-half-o{% elif review.rating < 4 %}-o {% endif %}" aria-hidden="true"></i> 
+                                                                    <i class="fa fa-star{% if review.rating == 4.5 %}-half-o{% elif review.rating < 5 %}-o {% endif %}" aria-hidden="true"></i> 
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div> <!-- icontext.// -->
+                                                    <div class="mt-3">
+                                                        <h6>{{review.subject}}</h6>
+
+                                                        <p>
+                                                            {{review.review}}
+                                                        </p>	
+                                                    </div>
+                                                </div>
+                                        </article>
+                                        {% endfor %}
+                                    </div> <!-- col.// -->
+                                </div> <!-- row.// -->
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="related__title">
+                        <h5>RELATED PRODUCTS</h5>
+                    </div>
+                </div>
+                {% for related_product in related_products %}
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="product__item">
+                        <div class="product__item__pic set-bg" data-setbg="{{related_product.product_image1.url}}">
+                            {% if related_product.stock > 0 %}
+                                {% if related_product.is_available %}
+                                    <div class="label new bg-success">{{related_product.offer}}%</div>
+                                {% else %}
+                                    <div class="label new bg-danger">Not Available</div>
+                                {% endif %}
+                            {% else %}
+                                <div class="label new bg-dark text-white">Out of stock</div>
+                            {% endif %}
+                            <ul class="product__hover">
+                                <li><a href="{{related_product.product_image1.url}}" class="image-popup"><span class="arrow_expand"></span></a></li>
+                                {% if user.is_authenticated %}
+                                    <li><a href="#" class="btn btn-sm btn-danger add-wishlist" data-product="{{related_product.id}}"><span class="icon_heart_alt text-dark"></span></a></li>
+                                {% else %}
+                                    <li><a href="#" class="btn btn-sm btn-danger disabled add-wishlist" data-product="{{related_product.id}}"><span class="icon_heart_alt"></span></a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        <div class="product__item__text">
+                            <h6><a href="{{product.get_url}}">{{related_product.product_name}}</a></h6>
+                            <div class="rating-star text-warning">
+                                <span>
+                                    <i class="fa fa-star{% if related_product.average_review < 0.5 %}-o{% elif related_product.average_review >= 0.5 and related_product.average_review < 1 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    <i class="fa fa-star{% if related_product.average_review < 1.5 %}-o{% elif related_product.average_review >= 1.5 and related_product.average_review < 2 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    <i class="fa fa-star{% if related_product.average_review < 2.5 %}-o{% elif related_product.average_review >= 2.5 and related_product.average_review < 3 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    <i class="fa fa-star{% if related_product.average_review < 3.5 %}-o{% elif related_product.average_review >= 3.5 and related_product.average_review < 4 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    <i class="fa fa-star{% if related_product.average_review < 4.5 %}-o{% elif related_product.average_review >= 4.5 and related_product.average_review < 5 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    
+                                </span>
+                            </div>
+                            <div class="product__price">${{product.offer_price}}</div>
+							<div class="text-secondary"><del>${{product.actual_price}}</del></div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+              
+            </div>
+        </div>
+    </section>
+    <!-- Product Details Section End -->
+
+<!-- Zoom JavaScript -->
+    <script>
+        let imageZoom1 = document.getElementById('imageZoom1');
+        imageZoom1.addEventListener('mousemove', (event) => {
+            imageZoom1.style.setProperty('--display', 'block');
+            let pointer = {
+                x: (event.offsetX * 100) / imageZoom1.offsetWidth,
+                y: (event.offsetY * 100) / imageZoom1.offsetHeight
+            }
+            imageZoom1.style.setProperty('--zoom-x', pointer.x + '%');
+            imageZoom1.style.setProperty('--zoom-y', pointer.y + '%');
+            console.log(pointer);
+        })
+        imageZoom1.addEventListener('mouseout', () => {
+            imageZoom1.style.setProperty('--display', 'none');
+        })
+    </script>
+    <script>
+        let imageZoom2 = document.getElementById('imageZoom2');
+        imageZoom2.addEventListener('mousemove', (event) => {
+            imageZoom2.style.setProperty('--display', 'block');
+            let pointer = {
+                x: (event.offsetX * 100) / imageZoom2.offsetWidth,
+                y: (event.offsetY * 100) / imageZoom2.offsetHeight
+            }
+            imageZoom2.style.setProperty('--zoom-x', pointer.x + '%');
+            imageZoom2.style.setProperty('--zoom-y', pointer.y + '%');
+            console.log(pointer);
+        })
+        imageZoom2.addEventListener('mouseout', () => {
+            imageZoom2.style.setProperty('--display', 'none');
+        })
+    </script>
+    <script>
+        let imageZoom3 = document.getElementById('imageZoom3');
+        imageZoom3.addEventListener('mousemove', (event) => {
+            imageZoom3.style.setProperty('--display', 'block');
+            let pointer = {
+                x: (event.offsetX * 100) / imageZoom3.offsetWidth,
+                y: (event.offsetY * 100) / imageZoom3.offsetHeight
+            }
+            imageZoom3.style.setProperty('--zoom-x', pointer.x + '%');
+            imageZoom3.style.setProperty('--zoom-y', pointer.y + '%');
+            console.log(pointer);
+        })
+        imageZoom3.addEventListener('mouseout', () => {
+            imageZoom3.style.setProperty('--display', 'none');
+        })
+    </script>
+<script>
+$(document).ready(function(){
+
+    // Add wishlist
+    $('.add-wishlist').on('click',function(e){
+        e.preventDefault(); 
+        var _pid=$(this).attr('data-product');
+        var _vm=$(this);
+        //Ajax
+        $.ajax({
+            url:"{% url 'add_wishlist' %}",
+            data:{
+                product:_pid
+            },
+            dataType:'json',
+            success:function(res){
+                if(res.bool==true){
+                    _vm.addClass('disabled').attr('disabled', 'disabled');
+                    $('#wishlist-message').show();
+                }
+            }
+                
+        });
+        //End Ajax
+        
+    });
+    //End wishlist
+});
+</script>
+</body>
+
+</html>
+{% endblock %}
+

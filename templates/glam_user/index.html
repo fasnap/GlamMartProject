@@ -1,0 +1,317 @@
+{% extends 'glam_user/base.html'%}
+{% load static %}
+{% block content %}
+<body>
+    <!-- Categories Section Begin -->
+    <section class="categories">
+        <div class="container-fluid">
+            {% for category in categories %}
+                <div class="row">
+                    <div class="col-lg-6 p-0">
+                        <div class="categories__item categories__large__item set-bg" data-setbg="{{category.category_image.url}}">
+                        <div class="categories__text float-right">
+                            <h1 class="text-dark">{{category.category_name}}’s fashion</h1>
+                            <a href="{{category.get_url}}">Shop now</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="col-lg-6">
+                <div class="row">
+                    {% for category in all_categories %}
+                        <div class="col-lg-6 col-md-6 col-sm-6 p-0">
+                            <div class="categories__item set-bg" data-setbg="{% if category.category_image %}{{category.category_image.url}}{% else %}{% static 'glam_user/img/categories/category-3.jpg' %}{% endif %}">
+                                <div class="categories__text">
+                                    <h4>{{category.category_name}}’s fashion</h4>
+                                    <p>{{category.product_count}} items</p>
+                                    <a href="{{category.get_url}}">Shop now</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Categories Section End -->
+<div id="wishlist-message" class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;">
+    The product has been added to your wishlist. <a href="{% url 'wishlist' %}" class="alert-link">View Wishlist</a>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<!-- Product Section Begin -->
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-4">
+                <div class="section-title">
+                    <h4>New product</h4>
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-8">
+                <ul class="filter__controls">
+                    <li class="active" data-filter="*"><a href="{% url 'store' %}">View All</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row property__gallery">
+            {% for product in products %}
+            <div class="col-lg-3 col-md-4 col-sm-6 mix women men kid accessories cosmetic">
+                <div class="product__item sale">
+                    <div class="product__item__pic set-bg" data-setbg="{{product.product_image1.url}}">
+                       
+                        {% if product.stock > 0 %}
+                            {% if product.is_available %}
+                                <div class="label new bg-success">{{product.offer}}%</div>
+                            {% else %}
+                                <div class="label new">Not Available</div>
+                            {% endif %}
+                        {% else %}
+                            <div class="label new">Out of stock</div>
+                        {% endif %}
+                        <ul class="product__hover">
+                            <li><a href="img/product/product-8.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
+                            {% if user.is_authenticated %}
+                                <li><a href="#" class="btn btn-sm btn-danger add-wishlist" data-product="{{product.id}}"><span class="icon_heart_alt text-white"></span></a></li>
+                            {% else %}
+                                <li><a href="#" class="btn btn-sm btn-danger disabled add-wishlist" data-product="{{product.id}}"><span class="icon_heart_alt"></span></a></li>
+                            {% endif %}
+                            
+                        </ul>
+                    </div>
+                    <div class="product__item__text">
+                        <h6><a href="{{product.get_url}}">{{product.product_name}}</a></h6>
+                        <div class="rating-star text-warning">
+                            <span>
+                                <i class="fa fa-star{% if product.average_review < 0.5 %}-o{% elif product.average_review >= 0.5 and product.average_review < 1 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                <i class="fa fa-star{% if product.average_review < 1.5 %}-o{% elif product.average_review >= 1.5 and product.average_review < 2 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                <i class="fa fa-star{% if product.average_review < 2.5 %}-o{% elif product.average_review >= 2.5 and product.average_review < 3 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                <i class="fa fa-star{% if product.average_review < 3.5 %}-o{% elif product.average_review >= 3.5 and product.average_review < 4 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                <i class="fa fa-star{% if product.average_review < 4.5 %}-o{% elif product.average_review >= 4.5 and product.average_review < 5 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                
+                            </span>
+                        </div>
+                        <div class="product__price">$ {{product.offer_price}} <span>$ {{product.actual_price}}</span></div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<!-- Product Section End -->
+
+<!-- Banner Section Begin -->
+<section class="banner set-bg" data-setbg="{% static 'glam_user/img/banner/banner-1.jpg' %}">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-7 col-lg-8 m-auto">
+                <div class="banner__slider owl-carousel">
+                    {% for category in slide_categories %}
+                    <div class="banner__item">
+                        <div class="banner__text">
+                            <span>The {{category.category_name}} Collection</span>
+                            <h1>{{category.category_name}}</h1>
+                            <a href="{{category.get_url}}">Shop now</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Banner Section End -->
+
+<!-- Trend Section Begin -->
+<section class="trend spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-6">
+                <div class="trend__content">
+                    <div class="section-title">
+                        <h4>Top Rated</h4>
+                    </div>
+                    {% for product in top_rated_products %}
+                    <div class="trend__item">
+                        <div class="trend__item__pic">
+                            <img src="{{product.product_image1.url}}" style="width:90px; height:90px" alt="">
+                        </div>
+                        <div class="trend__item__text">
+                            <h6>{{product.product_name}}</h6>
+                            <div class="rating-star text-warning">
+                                <span>
+                                    <i class="fa fa-star{% if product.average_review < 0.5 %}-o{% elif product.average_review >= 0.5 and product.average_review < 1 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    <i class="fa fa-star{% if product.average_review < 1.5 %}-o{% elif product.average_review >= 1.5 and product.average_review < 2 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    <i class="fa fa-star{% if product.average_review < 2.5 %}-o{% elif product.average_review >= 2.5 and product.average_review < 3 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    <i class="fa fa-star{% if product.average_review < 3.5 %}-o{% elif product.average_review >= 3.5 and product.average_review < 4 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    <i class="fa fa-star{% if product.average_review < 4.5 %}-o{% elif product.average_review >= 4.5 and product.average_review < 5 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    
+                                </span>
+                            </div>
+                            <div class="product__price">$ {{product.offer_price}}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6">
+                <div class="trend__content">
+                    <div class="section-title">
+                        <h4>Best seller</h4>
+                    </div>
+
+                    {% for product in max_order_products %}
+                    <div class="trend__item">
+                        <div class="trend__item__pic">
+                            <img src="{{product.product_image1.url}}" style="width:90px; height:90px"alt="">
+                        </div>
+                        <div class="trend__item__text">
+                            <h6>{{product.product_name}}</h6>
+                            <div class="rating-star text-warning">
+                                <span>
+                                    <i class="fa fa-star{% if product.average_review < 0.5 %}-o{% elif product.average_review >= 0.5 and product.average_review < 1 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    <i class="fa fa-star{% if product.average_review < 1.5 %}-o{% elif product.average_review >= 1.5 and product.average_review < 2 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    <i class="fa fa-star{% if product.average_review < 2.5 %}-o{% elif product.average_review >= 2.5 and product.average_review < 3 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    <i class="fa fa-star{% if product.average_review < 3.5 %}-o{% elif product.average_review >= 3.5 and product.average_review < 4 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    <i class="fa fa-star{% if product.average_review < 4.5 %}-o{% elif product.average_review >= 4.5 and product.average_review < 5 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    
+                                </span>
+                            </div>
+                            <div class="product__price">$ {{product.offer_price}}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-6">
+                <div class="trend__content">
+                    <div class="section-title">
+                        <h4>New Trend</h4>
+                    </div>
+                    {% for product in newest_products %}
+                    <div class="trend__item">
+                        <div class="trend__item__pic">
+                            <img src="{{product.product_image1.url}}" style="width:90px; height:90px"alt="">
+                        </div>
+                        <div class="trend__item__text">
+                            <h6>{{product.product_name}}</h6>
+                            <div class="rating-star text-warning">
+                                <span>
+                                    <i class="fa fa-star{% if product.average_review < 0.5 %}-o{% elif product.average_review >= 0.5 and product.average_review < 1 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    <i class="fa fa-star{% if product.average_review < 1.5 %}-o{% elif product.average_review >= 1.5 and product.average_review < 2 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    <i class="fa fa-star{% if product.average_review < 2.5 %}-o{% elif product.average_review >= 2.5 and product.average_review < 3 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    <i class="fa fa-star{% if product.average_review < 3.5 %}-o{% elif product.average_review >= 3.5 and product.average_review < 4 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                    <i class="fa fa-star{% if product.average_review < 4.5 %}-o{% elif product.average_review >= 4.5 and product.average_review < 5 %}-half-o {% endif %}" aria-hidden="true"></i> 
+                                </span>
+                            </div>
+                            <div class="product__price">$ {{product.offer_price}}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Trend Section End -->
+{% if coupon %}
+<!-- Discount Section Begin -->
+<section class="discount">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 p-0">
+                <div class="discount__pic">
+                    <img src="{% static 'glam_user/img/coupon/coupon5.png' %}" alt="">
+                </div>
+            </div>
+            <div class="col-lg-6 p-0">
+                <div class="discount__text">
+                    <div class="discount__text__title">
+                        <span>Discount</span>
+                        <h2>{{coupon.coupon_name}}</h2>
+                        <h5><span>Sale</span> {{coupon.discount}}%</h5>
+                    </div>
+                    <div class="discount__text__title">
+                        <h3>Coupon Code</h3><br>
+                        <h4 class="text-success"><strong>{{coupon.code}}</strong></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Discount Section End -->
+{% endif %}
+<!-- Services Section Begin -->
+<section class="services spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="services__item">
+                    <i class="fa fa-car"></i>
+                    <h6>Free Shipping</h6>
+                    <p>For all oder over $99</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="services__item">
+                    <i class="fa fa-money"></i>
+                    <h6>Money Back Guarantee</h6>
+                    <p>If good have Problems</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="services__item">
+                    <i class="fa fa-support"></i>
+                    <h6>Online Support 24/7</h6>
+                    <p>Dedicated support</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="services__item">
+                    <i class="fa fa-headphones"></i>
+                    <h6>Payment Secure</h6>
+                    <p>100% secure payment</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Services Section End -->
+<script>
+$(document).ready(function(){
+
+    // Add wishlist
+    $('.add-wishlist').on('click',function(e){
+        e.preventDefault(); 
+        var _pid=$(this).attr('data-product');
+        var _vm=$(this);
+        //Ajax
+        $.ajax({
+            url:"{% url 'add_wishlist' %}",
+            data:{
+                product:_pid
+            },
+            dataType:'json',
+            success:function(res){
+                if(res.bool==true){
+                    _vm.addClass('disabled').attr('disabled', 'disabled');
+                    $('#wishlist-message').show();
+                }
+            }
+                
+        });
+        //End Ajax
+        
+    });
+    //End wishlist
+});
+</script>
+</body>
+
+</html>
+{% endblock %}

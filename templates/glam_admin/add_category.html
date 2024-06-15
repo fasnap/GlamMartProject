@@ -1,0 +1,93 @@
+{% extends 'glam_admin/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container-fluid vw-100 d-flex flex-column" style="padding-right: 60px;">
+    <div class="main-panel flex-grow-1">
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h3 class="page-title">
+                    <span class="page-title-icon bg-gradient-primary text-white me-2">
+                        <i class="mdi mdi-folder"></i>
+                    </span> Add Category
+                </h3>
+            </div>
+            <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Add New Category</h4>
+                        <form class="forms-sample" method="POST" action="{% url 'add-category' %}" enctype="multipart/form-data" id="category-form">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="exampleInputName1">Category Name</label>
+                                <input type="text" class="form-control" id="exampleInputName1" placeholder="Category Name" name="category_name">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleTextarea1">Description</label>
+                                <textarea class="form-control" id="exampleTextarea1" rows="4" name="description"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Category Image</label>
+                                <div class="input-group col-xs-12">
+                                    <input type="file" class="form-control file-upload-info" placeholder="Upload Image" name="category_image" onchange="previewImage(event)">
+                                </div>
+                                <img id="category-image-preview" class="mt-2" style="max-width: 200px;" src="">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputName1">Category Offer %</label>
+                                <input type="text" class="form-control" id="offer" placeholder="Offer %" name="category_offer">
+                            </div>
+                            <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
+                            <a href="{% url 'category' %}" class="btn btn-light">Cancel</a>
+                        </form>
+                    </div>
+                    {% for message in messages %}
+                    <h5 class="text-danger">{{ message }}</h5>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <!-- content-wrapper ends -->
+    </div>
+    <!-- main-panel ends -->
+</div>
+<!-- container-scroller ends -->
+
+<script>
+    function previewImage(event) {
+        var input = event.target;
+        var preview = document.getElementById('category-image-preview');
+        var reader = new FileReader();
+        reader.onload = function() {
+            preview.src = reader.result;
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+</script>
+<script>
+$(document).ready(function(){
+	$('#category-form').validate({
+		rules: {
+			category_name:{
+				required:true
+			}
+		},
+		messages: {
+            category_name: {
+                required: "Please enter category name"
+            }
+		},
+		errorElement: 'div',
+        errorPlacement: function(error, element) {
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        },
+        highlight: function(element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function(element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        }
+	});
+});
+</script>
+{% endblock %}

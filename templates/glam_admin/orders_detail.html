@@ -1,0 +1,83 @@
+{% extends 'glam_admin/base.html' %}
+{% load static %}
+{% block content %}
+<body>
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="page-header">
+        <h3 class="page-title">
+          <span class="page-title-icon bg-gradient-primary text-white me-2">
+            <i class="mdi mdi-cart"></i>
+          </span> Oder Details
+        </h3>
+      </div>
+      <div class="row">
+        <div class="col-12 grid-margin">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title text-success">ORDER NUMBER <strong>#{{order.order_number}}</strong></h4>
+              <hr>
+              <div class="d-flex justify-content-between align-items-center">
+               
+                <div class="text-right">
+                    <br><h5 class="text-muted">Delivery Charge</h5><br>
+                    <h3 class="text-danger"> $ {{order.delivery_charge}}</h3>
+                </div>
+                <div class="text-right">
+                    <br><h5 class="text-muted">Order Discount</h5><br>
+                    <h3 class="text-danger"> $ {{order.discount}}</h3>
+                </div>
+                <div class="text-left">
+                    <br><h5 class="text-muted">Order Total</h5><br>
+                    <h3 class="text-primary">$ {{order.order_total}}</h3>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 grid-margin">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title text-success">PRODUCTS IN THIS ORDER</h4>
+              <div class="table-responsive">
+                <table class="table table-bororder_detaildered ">
+                  <thead>
+                    <tr>
+                      <th> Image </th>
+                      <th> Product </th>
+                      <th> Quantity</th>
+                      <th> Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for order in order_detail %}
+                    <tr>
+                      <td>
+                        <img src="{{ order.product.product_image1.url }}" class="me-2" alt="image" style="width: 100px; height: auto;">
+                      </td>
+                      <td><p class="text-info">{{order.product.product_name}} </p>
+                          {% if order.variations.all %}
+                              {% for item in order.variations.all %}
+                                  <p class="text-muted">{{ item.variation_category | capfirst }} : {{item.variation_value | capfirst}} <br></p>
+                              {% endfor %}
+                          {% endif %}
+                      </td>
+                      <td>{{order.quantity}}</td>
+                      <td>{{order.product_price}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+{% endblock %}

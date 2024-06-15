@@ -1,0 +1,78 @@
+{% extends 'glam_admin/base.html' %}
+{% load static %}
+{% block content %}
+<body>
+    <div class="container-fluid vw-100 d-flex flex-column" style="padding-right: 60px;">
+        <div class="container-fluid page-body-wrapper flex-grow-1 d-flex flex-column">
+            <div class="main-panel flex-grow-1 d-flex flex-column">
+                <div class="content-wrapper flex-grow-1">
+                    <div class="page-header">
+                        <h3 class="page-title">
+                            <span class="page-title-icon bg-gradient-primary text-white me-2">
+                                <i class="mdi mdi-ticket-percent"></i>
+                            </span> COUPONS
+                        </h3>
+                        <div class="col-md-6">
+                            <!-- Search form -->
+                            <form method="GET" action="{% url 'coupons' %}" class="d-flex">
+                                <input class="form-control me-2" type="search" placeholder="Search products" aria-label="Search" name="q">
+                                <button class="btn btn-outline-primary" type="submit">Search</button>
+                            </form>
+                        </div>
+                        <div class="add-items d-flex">
+                            <a href="{% url 'add_coupon' %}">+ Add Coupon</a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Coupons</h4>
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th> Coupon Code </th>
+                                                    <th> Coupon Name </th>
+                                                    <th> Discount % </th>
+                                                    <th> Valid From </th>
+                                                    <th> Valid To </th>
+                                                    <th> Status </th>
+                                                    <th> Edit </th>
+                                                    <th> Delete </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for coupon in coupons %}
+                                                <tr>
+                                                    <td>{{ coupon.code }}</td>
+                                                    <td>{{ coupon.coupon_name }}</td>
+                                                    <td>{{ coupon.discount }}</td>
+                                                    <td>{{ coupon.valid_from }}</td>
+                                                    <td>{{ coupon.valid_to }}</td>
+                                                    {% if coupon.status %}
+                                                    <td>
+                                                        <p class="badge badge-success">Active</p>
+                                                    </td>
+                                                    {% else %}
+                                                    <td>
+                                                        <p class="badge badge-danger">Inactive</p>
+                                                    </td>
+                                                    {% endif %}
+                                                    <td><a href="{% url 'edit_coupon' coupon.id %}">Edit</a></td>
+                                                    <td><a href="{% url 'delete_coupon' coupon.id %}">Delete</a></td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

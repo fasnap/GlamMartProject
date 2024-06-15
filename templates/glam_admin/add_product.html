@@ -1,0 +1,204 @@
+{% extends 'glam_admin/base.html' %}
+{% load static %}
+{% block content %}
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.js"></script>
+
+<style>
+  .not-visible {
+    display: none;
+  }
+</style>
+</head>
+<body>
+  <div class="container-fluid vw-100 d-flex flex-column" style="padding-right: 60px;">
+    <div class="main-panel flex-grow-1">
+      <div class="content-wrapper">
+        <div class="page-header">
+          <h3 class="page-title">
+            <span class="page-title-icon bg-gradient-primary text-white me-2">
+              <i class="mdi mdi-package-variant-closed"></i>
+            </span>Add Product
+          </h3>
+        </div>
+        <div class="col-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Add New Product</h4>
+              <form class="forms-sample" method="POST" action="{% url 'add-product' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                  <label for="exampleInputName1">Product Name</label>
+                  <input type="text" class="form-control" id="product-name" placeholder="Product Name" name="product_name">
+                </div>
+                <div class="form-group">
+                  <label for="exampleTextarea1">Description</label>
+                  <textarea class="form-control" id="exampleTextarea1" rows="4" name="description"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputName1">Actual Price</label>
+                  <input type="text" class="form-control" id="actual-price" placeholder="Actual Price" name="actual_price">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputName1">Product Offer %</label>
+                  <input type="text" class="form-control" id="offer" placeholder="Offer %" name="product_offer">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputName1">Stock</label>
+                  <input type="text" class="form-control" id="stock" placeholder="Stock" name="stock">
+                </div>
+                <div class="form-group">
+                  <label for="category">Category</label>
+                  <select class="form-select" name="category" id="category">
+                    <option value="" selected>Select category</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.category_name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="sub_category">Subcategory</label>
+                  <select class="form-select" id="sub_category" name="sub_category">
+                    <option value="" selected>Select Subcategory</option>
+                    {% for sub_category in sub_categories %}
+                    <option value="{{sub_category.id}}">{{sub_category.sub_category_name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Product Image 1</label>
+                  <div class="input-group col-xs-12">
+                    <input type="file" class="form-control file-upload-info" name="product_image1" onchange="previewImage(event, 1)">
+                  </div>
+                  <img id="product_image1" class="mt-2" style="max-width: 200px;" src="{{product.product_image1.url}}">
+                  <div style="width: 400px;" id="image-box1" class="image-container m-auto"></div>
+                  <button class="btn btn-outline-info m-auto not-visible" id="crop-btn1" style="margin-top: 10px;" type="button">Crop</button>
+                </div>
+                <div class="form-group">
+                  <label>Product Image 2</label>
+                  <div class="input-group col-xs-12">
+                    <input type="file" class="form-control file-upload-info" name="product_image2" onchange="previewImage(event, 2)">
+                  </div>
+                  <img id="product_image2" class="mt-2" style="max-width: 200px;" src="{{product.product_image2.url}}">
+                  <div style="width: 400px;" id="image-box2" class="image-container m-auto"></div>
+                  <button class="btn btn-outline-info m-auto not-visible" id="crop-btn2" style="margin-top: 10px;" type="button">Crop</button>
+                </div>
+                <div class="form-group">
+                  <label>Product Image 3</label>
+                  <div class="input-group col-xs-12">
+                    <input type="file" class="form-control file-upload-info" name="product_image3" onchange="previewImage(event, 3)">
+                  </div>
+                  <img id="product_image3" class="mt-2" style="max-width: 200px;" src="{{product.product_image3.url}}">
+                  <div style="width: 400px;" id="image-box3" class="image-container m-auto"></div>
+                  <button class="btn btn-outline-info m-auto not-visible" id="crop-btn3" style="margin-top: 10px;" type="button">Crop</button>
+                </div>
+                <button type="submit" class="btn btn-gradient-primary me-2" id="confirm-btn">Submit</button>
+                <a href="{% url 'product' %}" class="btn btn-light"> Cancel</a>
+              </form>
+            </div>
+            {% for message in messages %}
+            <h5 class="text-danger">{{message}}</h5>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <!-- content-wrapper ends -->
+    </div>
+    <!-- main-panel ends -->
+  </div>
+    <!-- page-body-wrapper ends -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+  $(document).ready(function() {
+    $('#category').change(function() {
+      var categoryId = $(this).val();
+      $.ajax({
+        url: '{% url "get-subcategories" %}',
+        data: {
+          'category_id': categoryId
+        },
+        dataType: 'json',
+        success: function(data) {
+          $('#sub_category').empty();
+          $.each(data.subcategories, function(key, value) {
+            $('#sub_category').append($('<option>', {
+              value: value.id,
+              text: value.sub_category_name
+            }));
+          });
+        }
+      });
+    });
+  });
+
+  const allowedExtensions = /\.(jpg|jpeg|png|webp)$/i;
+  let cropper;
+  const confirm_btn = document.getElementById('confirm-btn');
+
+  function previewImage(event, imageNumber) {
+    const input = event.target;
+    if (!allowedExtensions.exec(input.value)) {
+      alert('Invalid file type');
+      input.value = '';
+      return;
+    }
+
+    const img_data = input.files[0];
+    const url = URL.createObjectURL(img_data);
+    const imageBoxId = `image-box${imageNumber}`;
+    const cropBtnId = `crop-btn${imageNumber}`;
+    const imageBox = document.getElementById(imageBoxId);
+    const cropBtn = document.getElementById(cropBtnId);
+
+    imageBox.innerHTML = `<img src="${url}" id="image${imageNumber}" style="width:500px;">`;
+    const image = document.getElementById(`image${imageNumber}`);
+
+    imageBox.style.display = 'block';
+    cropBtn.style.display = 'block';
+    confirm_btn.style.display = 'none';
+
+    if (cropper) {
+      cropper.destroy();
+    }
+
+    cropper = new Cropper(image, {
+      autoCropArea: 1,
+      viewMode: 1,
+      scalable: false,
+      zoomable: false,
+      movable: false,
+      aspectRatio: 270 / 360,
+      minCropBoxWidth: 270,
+      minCropBoxHeight: 360,
+    });
+
+    cropBtn.onclick = () => {
+      cropImage(input, img_data.name, imageNumber, imageBoxId, cropBtnId);
+    };
+  }
+
+  function cropImage(input, fileName, imageNumber, imageBoxId, cropBtnId) {
+    cropper.getCroppedCanvas({
+      width: 270,
+      height: 360,
+    }).toBlob((blob) => {
+      const file = new File([blob], fileName, { type: "image/*", lastModified: new Date().getTime() });
+      const container = new DataTransfer();
+      container.items.add(file);
+      input.files = container.files;
+
+      const imgElement = document.getElementById(`product_image${imageNumber}`);
+      const url = URL.createObjectURL(file);
+      imgElement.src = url;
+
+      const imageBox = document.getElementById(imageBoxId);
+      const cropBtn = document.getElementById(cropBtnId);
+      imageBox.style.display = 'none';
+      cropBtn.style.display = 'none';
+      confirm_btn.style.display = 'block';
+    });
+  }
+  </script>
+</body>
+{% endblock %}

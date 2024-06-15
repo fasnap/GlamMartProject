@@ -1,0 +1,140 @@
+{% extends 'glam_admin/base.html' %}
+{% load static %}
+{% block content %}
+<body>
+    <div class="container-fluid vw-100 d-flex flex-column" style="padding-right: 60px;">
+        <div class="container-fluid page-body-wrapper flex-grow-1 d-flex flex-column">
+            <div class="main-panel flex-grow-1 d-flex flex-column">
+                <div class="content-wrapper flex-grow-1">
+                    <div class="page-header">
+                        <h3 class="page-title">
+                            <span class="page-title-icon bg-gradient-primary text-white me-2">
+                                <i class="mdi mdi-account"></i>
+                            </span> Users
+                        </h3>
+                        <div class="col-md-6">
+                            <!-- Search form -->
+                            <form method="GET" action="{% url 'users' %}" class="d-flex">
+                                <input class="form-control me-2" type="search" placeholder="Search products" aria-label="Search" name="q">
+                                <button class="btn btn-outline-primary" type="submit">Search</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 grid-margin">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Users</h4>
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th> First Name </th>
+                                                    <th> Last Name </th>
+                                                    <th> Username </th>
+                                                    <th> Email </th>
+                                                    <th> Phone Number </th>
+                                                    <th> Status </th>
+                                                    <th> Edit </th>
+                                                    <th> Delete </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for user in registered_users %}
+                                                <tr>
+                                                    <td>{{ user.first_name }}</td>
+                                                    <td>{{ user.last_name }}</td>
+                                                    <td>{{ user.username }}</td>
+                                                    <td>{{ user.email }}</td>
+                                                    <td>{{ user.phone_number }}</td>
+                                                    {% if user.is_active %}
+                                                    <td>
+                                                        <button class="badge badge-success">Active</button>
+                                                    </td>
+                                                    {% else %}
+                                                    <td>
+                                                        <button class="badge badge-danger">Inactive</button>
+                                                    </td>
+                                                    {% endif %}
+                                                    <td><a href="{% url 'edit-user' user.id %}"><i class="bi bi-pen text-primary"></i></a></td>
+                                                    {% if user.is_active %}
+                                                    <td><a href="{% url 'block_unblock_user' user.id %}" onclick="return confirmBlock('{% url 'block_unblock_user' user.id %}')">Block</a></td>
+                                                    {% else %}
+                                                    <td><a href="{% url 'block_unblock_user' user.id %}" onclick="return confirmUnblock('{% url 'block_unblock_user' user.id %}')">Unblock</a></td>
+                                                    {% endif %}
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <nav class="mt-4" aria-label="Page navigation sample">
+                                {% if registered_users.has_other_pages %}
+                                <ul class="pagination justify-content-center">
+                                    {% if registered_users.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link px-3 py-2" href="?page={{registered_users.previous_page_number}}{% if query %}&q={{ query }}{% endif %}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link px-3 py-2" aria-hidden="true">&laquo;</span>
+                                    </li>
+                                    {% endif %}
+
+                                    {% for i in registered_users.paginator.page_range %}
+                                    {% if registered_users.number == i %}
+                                    <li class="page-item active"><a class="page-link px-3 py-2" href="#">{{i}}</a></li>
+                                    {% else %}
+                                    <li class="page-item"><a class="page-link px-3 py-2" href="?page={{i}}{% if query %}&q={{ query }}{% endif %}">{{i}}</a></li>
+                                    {% endif %}
+                                    {% endfor %}
+
+                                    {% if registered_users.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link px-3 py-2" href="?page={{registered_users.next_page_number}}{% if query %}&q={{ query }}{% endif %}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                            <span class="sr-only">Next</span>
+                                        </a>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link px-3 py-2" aria-hidden="true">&raquo;</span>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                                {% endif %}
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+                <!-- content-wrapper ends -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <script>
+        function confirmBlock(url) {
+            if (confirm("Are you sure you want to block the user?")) {
+                window.location.href = url; 
+            } else {
+                window.location.href = "{% url 'users' %}";
+            }
+            return false; 
+        }
+        function confirmUnblock(url) {
+            if (confirm("Are you sure you want to unblock the user?")) {
+                window.location.href = url; 
+            } else {
+                window.location.href = "{% url 'users' %}";
+            }
+            return false; 
+        }
+    </script>
+</body>
+{% endblock %}

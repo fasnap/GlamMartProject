@@ -1,0 +1,162 @@
+{% extends 'glam_admin/base.html' %}
+{% load static %}
+{% block content %}
+  <body>
+    <div class="container-fluid vw-100 d-flex flex-column" style="padding-right: 60px;">
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="page-header">
+              <h3 class="page-title">
+                <span class="page-title-icon bg-gradient-primary text-white me-2">
+                  <i class="mdi mdi-folder"></i>
+                </span> Category
+                
+              </h3>
+                    <div class="col-md-6">
+                      <!-- Search form -->
+                      <form method="GET" action="{% url 'category' %}" class="d-flex">
+                          <input class="form-control me-2" type="search" placeholder="Search products" aria-label="Search" name="q">
+                          <button class="btn btn-outline-primary" type="submit">Search</button>
+                      </form>
+                    </div>
+                    <div class="add-items d-flex">
+                    <a href="{% url 'add-category' %}">+ Add Category</a>
+                    </div>
+            </div>
+            <div class="row">
+              <div class="col-12 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title">Categories</h4>
+                    <div class="table-responsive">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th> Category Name </th>
+                            <th> Status</th>
+                            <th> Image </th>
+                            <th>Offer %</th>
+                            <th> Action </th>
+                            <th> Edit </th>
+                            <th> Delete </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {% for category in categories %}
+                        <tr>
+                            
+                            <td>{{category.category_name}}</td>
+                            {% if category.is_active %}
+                            <td>
+                              <button class="badge badge-success">active</button>
+                            </td>
+                            {% else %}
+                            <td>
+                              <button class="badge badge-danger">Inactive</button>
+                            </td>
+                            {% endif %}
+                            <td>
+                            {% if category.category_image %}
+                              <img src="{{ category.category_image.url }}" class="me-2" alt="image">
+                            {% else %}
+                            No Image Available
+                             {% endif %}
+                            </td>
+                            <td>{{category.category_offer}}</td>
+                            <td>
+                            {% if category.is_active %}
+                              {% if category.slug %}
+                              <a href="{% url 'sub-category' category.slug %}" class="badge badge-success">Manage Sub Category</a>
+                              {% endif %}
+                            {% else %}
+                              Category inactive
+                            {% endif %}
+                            </td>
+                            {% if category.slug %}
+                            <td> <a href="{% url 'edit-category' category.slug %}"><i class="bi bi-pen text-primary"></i></a></td>
+                            
+                            {% if category.is_active %}
+                            <td> <a href="{% url 'activate_inactivate_category' category.slug %}" onclick="return confirmInactivate('{% url 'activate_inactivate_category' category.slug %}')" ><i class="bi bi-x-diamond"></i> </a></td>
+                            {% else %}
+                            <td> <a href="{% url 'activate_inactivate_category' category.slug %}" onclick="return confirmActivate('{% url 'activate_inactivate_category' category.slug %}')"><i class="bi bi-x-diamond-fill"></i> </a></td>
+                            {% endif %}
+                            {% endif %}
+                        </tr>
+                        
+                        {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <nav class="mt-4" aria-label="Page navigation sample">
+                  {% if categories.has_other_pages %}
+                  <ul class="pagination justify-content-center">
+                      {% if categories.has_previous %}
+                      <li class="page-item">
+                          <a class="page-link px-3 py-2" href="?page={{categories.previous_page_number}}{% if query %}&q={{ query }}{% endif %}" aria-label="Previous">
+                              <span aria-hidden="true">&laquo;</span>
+                              <span class="sr-only">Previous</span>
+                          </a>
+                      </li>
+                      {% else %}
+                      <li class="page-item disabled">
+                          <span class="page-link px-3 py-2" aria-hidden="true">&laquo;</span>
+                      </li>
+                      {% endif %}
+
+                      {% for i in categories.paginator.page_range %}
+                      {% if categories.number == i %}
+                      <li class="page-item active"><a class="page-link px-3 py-2" href="#">{{i}}</a></li>
+                      {% else %}
+                      <li class="page-item"><a class="page-link px-3 py-2" href="?page={{i}}{% if query %}&q={{ query }}{% endif %}">{{i}}</a></li>
+                      {% endif %}
+                      {% endfor %}
+
+                      {% if categories.has_next %}
+                      <li class="page-item">
+                          <a class="page-link px-3 py-2" href="?page={{categories.next_page_number}}{% if query %}&q={{ query }}{% endif %}" aria-label="Next">
+                              <span aria-hidden="true">&raquo;</span>
+                              <span class="sr-only">Next</span>
+                          </a>
+                      </li>
+                      {% else %}
+                      <li class="page-item disabled">
+                          <span class="page-link px-3 py-2" aria-hidden="true">&raquo;</span>
+                      </li>
+                      {% endif %}
+                  </ul>
+                  {% endif %}
+                </nav>
+              </div>
+            </div>
+          </div>
+          <!-- content-wrapper ends -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+  
+ <script>
+    function confirmInactivate(url) {
+        if (confirm("Are you sure you want to inactivate the category?")) {
+            window.location.href = url; 
+        } else {
+            window.location.href = "{% url 'category' %}";
+        }
+        return false; 
+    }
+    function confirmActivate(url) {
+        if (confirm("Are you sure you want to activate the category?")) {
+            window.location.href = url; 
+        } else {
+            window.location.href = "{% url 'category' %}";
+        }
+        return false; 
+    }
+</script>
+  </body>
+</html>
+{% endblock %}
