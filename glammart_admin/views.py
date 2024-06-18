@@ -96,6 +96,7 @@ def admin_home(request):
 def admin_login(request):
     if request.user.is_authenticated and request.user.is_superuser:
         return redirect('admin-home')
+        
     if request.method=='POST':
         email=request.POST['email']
         password=request.POST['password']
