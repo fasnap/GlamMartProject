@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['18.209.24.30', '127.0.0.1', 'fazfashion.xyz']
+ALLOWED_HOSTS = ['18.209.24.30', '127.0.0.1', 'fazfashion.xyz', 'www.fazfashion.xyz']
 
 
 # Application definition
@@ -191,4 +191,7 @@ AWS_DEFAULT_ACL =  None
 AWS_S3_VERITY = True
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-CSRF_TRUSTED_ORIGINS = ['https://fazfashion.xyz/', 'https://www.fazfashion.xyz/']
+CSRF_TRUSTED_ORIGINS = ['https://fazfashion.xyz', 'https://www.fazfashion.xyz/']
+CSRF_COOKIE_SECURE = True  # Ensure this is set if you are using HTTPS
+CSRF_COOKIE_HTTPONLY = True  # This setting can enhance security
+
