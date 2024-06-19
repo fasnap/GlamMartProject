@@ -353,7 +353,7 @@ def add_variation(request):
         return redirect('variations')
     else:
         products=Product.objects.all()
-        variations_categories=Variation.objects.values('variation_category').distinct()
+        variations_categories=Variation.variation_category_choice
         print(variations_categories)
         context={
             'products':products,

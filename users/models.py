@@ -21,10 +21,10 @@ class UserProfile(models.Model):
     
 class UserAddress(models.Model):
     user=models.ForeignKey(UserAccount, on_delete=models.CASCADE)
-    first_name=models.CharField(max_length=50)
-    last_name=models.CharField(max_length=50,blank=True, null=True)
+    first_name=models.CharField(max_length=100)
+    last_name=models.CharField(max_length=100,blank=True, null=True)
     email=models.EmailField(max_length=100)
-    phone_number=models.CharField(max_length=10)
+    phone_number=models.CharField(max_length=100)
     address_line1 = models.CharField(max_length=200)
     address_line2 = models.CharField(max_length=200, blank=True, null=True)
     country=models.CharField(max_length=100)

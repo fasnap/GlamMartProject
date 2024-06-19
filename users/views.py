@@ -12,6 +12,7 @@ from django.contrib.auth.hashers import check_password
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.views.decorators.csrf import csrf_exempt
 
 # Admin view all users
 @login_required(login_url='admin-login')
@@ -398,7 +399,7 @@ def apply_referral(request):
         return render(request, 'glam_user/referral.html', {'applied_referral_code': applied_referral_code})
     return redirect('referral')
 
-
+@csrf_exempt
 @login_required(login_url='user-login')
 def continue_paypal_payments(request):
     body=json.loads(request.body)

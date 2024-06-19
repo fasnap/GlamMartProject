@@ -23,77 +23,87 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 # Create your views here.
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
 @login_required(login_url='user-login')
 def paypal_payments(request):
+    print("hi----------------------hi")
+    csrf_token = request.META.get("CSRF_COOKIE")
+    print(csrf_token)
+  
     body=json.loads(request.body)
-    order=Order.objects.get(user=request.user, is_ordered=False, order_number=body['orderID'])
-    # Store transaction details inside payment model
-    payment=Payment(
-        user = request.user,
-        payment_id = body['transID'],
-        payment_method = body['payment_method'],
-        amount_paid = order.order_total,
-        status=body['status']
-    )
-    payment.save()
-    order.payment=payment
-    order.is_ordered=True
-    order.save()
-    if 'coupon_id' in request.session:
-        coupon_id=request.session['coupon_id']
-        coupon=Coupons.objects.get(id=coupon_id)
-        CouponCheck.objects.create(user=request.user, coupon=coupon)
+    try:
+        order=Order.objects.get(user=request.user, is_ordered=False, order_number=body['orderID'])
+        # Store transaction details inside payment model
+        payment=Payment(
+            user = request.user,
+            payment_id = body['transID'],
+            payment_method = body['payment_method'],
+            amount_paid = order.order_total,
+            status=body['status']
+        )
+        payment.save()
+        order.payment=payment
+        order.is_ordered=True
+        order.save()
+        if 'coupon_id' in request.session:
+            coupon_id=request.session['coupon_id']
+            coupon=Coupons.objects.get(id=coupon_id)
+            CouponCheck.objects.create(user=request.user, coupon=coupon)
+            
+            del request.session['coupon_id']
+            del request.session['sub_total']
+            del request.session['discount_price']
+        # Move the cart item to Order product table
+        cart_items=CartItem.objects.filter(user=request.user, is_active=True)
+        for item in cart_items:
+            orderproduct=OrderProduct()
+            orderproduct.order_id=order.id
+            orderproduct.payment=payment
+            orderproduct.user_id=request.user.id
+            orderproduct.product_id=item.product_id
+            orderproduct.quantity=item.quantity
+            orderproduct.product_price=item.product.offer_price
+            orderproduct.ordered=True
+            orderproduct.save()
+
+            # Assigning variations into orderproduct table(variations can be assign only after saving the orderproduct instance, because variations is many to many field)
+            cart_item=CartItem.objects.get(id=item.id)
+            product_variation=cart_item.variations.all()
+            orderproduct=OrderProduct.objects.get(id=orderproduct.id)
+            orderproduct.variations.set(product_variation)
+            orderproduct.save()
+
+            # Reduce quantity of sold products
+            product=Product.objects.get(id=item.product_id)
+            product.stock -= item.quantity
+            if product.stock <=0 :
+                product.is_available=False
+            product.save()
+
+        # Clear cart after successfull order
+        CartItem.objects.filter(user=request.user).delete()
         
-        del request.session['coupon_id']
-        del request.session['sub_total']
-        del request.session['discount_price']
-    # Move the cart item to Order product table
-    cart_items=CartItem.objects.filter(user=request.user, is_active=True)
-    for item in cart_items:
-        orderproduct=OrderProduct()
-        orderproduct.order_id=order.id
-        orderproduct.payment=payment
-        orderproduct.user_id=request.user.id
-        orderproduct.product_id=item.product_id
-        orderproduct.quantity=item.quantity
-        orderproduct.product_price=item.product.offer_price
-        orderproduct.ordered=True
-        orderproduct.save()
-
-        # Assigning variations into orderproduct table(variations can be assign only after saving the orderproduct instance, because variations is many to many field)
-        cart_item=CartItem.objects.get(id=item.id)
-        product_variation=cart_item.variations.all()
-        orderproduct=OrderProduct.objects.get(id=orderproduct.id)
-        orderproduct.variations.set(product_variation)
-        orderproduct.save()
-
-        # Reduce quantity of sold products
-        product=Product.objects.get(id=item.product_id)
-        product.stock -= item.quantity
-        if product.stock <=0 :
-            product.is_available=False
-        product.save()
-
-    # Clear cart after successfull order
-    CartItem.objects.filter(user=request.user).delete()
-    
-    # Send order success mail to user
-    send_mail(
-        'Thank YOu For Your Order',
-        'We have received your order, Enjoy sopping with GlamMart',
-        'testmaildjango27121995@gmail.com',
-        [request.user.email],
-        fail_silently=False,
-    )
-    order.status='Ordered'
-    order.save()
-    # Send order number and transaction id back to sendData method via json response
-    data={
-        'order_number': order.order_number,
-        'transID': payment.payment_id,
-    }
-    return JsonResponse(data)
+        # Send order success mail to user
+        send_mail(
+            'Thank YOu For Your Order',
+            'We have received your order, Enjoy sopping with GlamMart',
+            'testmaildjango27121995@gmail.com',
+            [request.user.email],
+            fail_silently=False,
+        )
+        order.status='Ordered'
+        order.save()
+        # Send order number and transaction id back to sendData method via json response
+        data={
+            'order_number': order.order_number,
+            'transID': payment.payment_id,
+        }
+        return JsonResponse(data)
+    except Exception as e:
+        print("Error: ", e)
+        return JsonResponse({'error': str(e)}, status=500)
 
 @login_required(login_url='user-login')
 def paypal_order_complete(request):
@@ -213,9 +223,7 @@ def payments(request):
 def place_order(request,total=0,quantity=0):
     current_user=request.user
     cart_items=CartItem.objects.filter(user=current_user, is_active=True)
-    for item in cart_items:
-        print(item.is_active)
-
+  
     cart_count=cart_items.count()
     if cart_count <= 0:
         return redirect('store')
@@ -249,7 +257,7 @@ def place_order(request,total=0,quantity=0):
         discount = 0
 
     if request.method=='POST':
-        selected_address_id=request.POST['address_id']
+        selected_address_id = request.POST.get('address_id')
         order_note=request.POST.get('order_note')
         ip=request.META.get('REMOTE_ADDR')
 
@@ -340,6 +348,7 @@ def place_order(request,total=0,quantity=0):
                     zip_code=zip_code,
                 )
                 new_address.save()
+
             order=Order(
                 user=request.user,
                 address=new_address,
@@ -651,7 +660,6 @@ def download_sales_report_pdf(request):
     return response
 
 # Admin side sales report excel file generating
-
 def generate_excel(orders, total_orders_count, total_success_order_amount, total_discount_amount):
     output = BytesIO()
     workbook = xlsxwriter.Workbook(output, {'in_memory': True})
@@ -662,8 +670,11 @@ def generate_excel(orders, total_orders_count, total_success_order_amount, total
     for col, header in enumerate(headers):
         worksheet.write(0, col, header)
 
+    # Initialize row variable
+    row = 1
+
     # Write data rows to the worksheet
-    for row, order in enumerate(orders, start=1):
+    for order in orders:
         worksheet.write(row, 0, order.order_number)
         worksheet.write(row, 1, order.user.username)
         worksheet.write(row, 2, order.created_at.strftime("%d-%m-%Y"))
@@ -673,15 +684,15 @@ def generate_excel(orders, total_orders_count, total_success_order_amount, total
         worksheet.write(row, 6, order.payment.status if order.payment else '')
         worksheet.write(row, 7, order.payment.payment_method if order.payment else '')
         worksheet.write(row, 8, order.status if order.status else '')
+        row += 1
 
     # Add total orders and total success order amount to the worksheet
-    worksheet.write(row + 2, 0, 'Overall Sales Count:')
-    worksheet.write(row + 2, 1, total_orders_count)
-    worksheet.write(row + 3, 0, 'Overall Success Order Amount:')
-    worksheet.write(row + 3, 1, total_success_order_amount)
-    worksheet.write(row + 4, 0, 'Overall Discount:')
-    worksheet.write(row + 4, 1, total_discount_amount)
-    total_discount_amount
+    worksheet.write(row + 1, 0, 'Overall Sales Count:')
+    worksheet.write(row + 1, 1, total_orders_count)
+    worksheet.write(row + 2, 0, 'Overall Success Order Amount:')
+    worksheet.write(row + 2, 1, total_success_order_amount)
+    worksheet.write(row + 3, 0, 'Overall Discount:')
+    worksheet.write(row + 3, 1, total_discount_amount)
 
     workbook.close()
     output.seek(0)

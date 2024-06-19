@@ -35,8 +35,8 @@
                   <label for="category">Variation Category</label>
                   <select class="form-select" name="variation_category" id="variation_category">
                       <option value="" selected>Select Variation Category</option>
-                      {% for category in variations_categories %}
-                      <option value="{{ category.variation_category }}">{{ category.variation_category }}</option>
+                      {% for category, display_name in variations_categories %}
+                        <option value="{{ category }}">{{ display_name }}</option>
                       {% endfor %}
                   </select>
               </div>

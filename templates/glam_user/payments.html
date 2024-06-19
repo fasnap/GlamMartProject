@@ -150,20 +150,20 @@
             paypalRadio.addEventListener('change', togglePaymentButtons);
         
             function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
                     }
                 }
+                return cookieValue;
             }
-            return cookieValue;
-        }
 
         var amount="{{ grand_total }}"
         var url = "{% url 'paypal_payments' %}"
@@ -196,31 +196,40 @@
                     // Show success message to the buyer
                     console.log(details)
                     // Call function to send data
-                    sendData();
-                    function sendData(){
-                        fetch(url,{
-                            method : 'POST',
-                            headers: {
-                                "Content-type": "application/json",
-                                "X-CSRFToken": csrftoken,
-                            },
-                            body: JSON.stringify({
-                                orderID: orderID,
-                                transID: details.id,
-                                payment_method: payment_method,
-                                status: details.status,
-                            }),
-                        })
-                        .then((response) => response.json())
-                        .then((data) => {
-                            console.log("Success ", data);
-                            console.log("Transaction Completed.");
-                                window.location.href = redirect_url + '?order_number='+data.order_number+'&payment_id='+data.transID;
-                        });
-                    }
+                    sendData(details);
                 });
             }
         }).render('#paypal-button-container');
+
+        function sendData(details){
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                },
+                body: JSON.stringify({
+                    orderID: orderID,
+                    transID: details.id,
+                    payment_method: payment_method,
+                    status: details.status,
+                }),
+            })
+            .then((response) => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log("Success:", data);
+                console.log("Transaction Completed.");
+                window.location.href = redirect_url + '?order_number=' + data.order_number + '&payment_id=' + data.transID;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
     });
     </script>
 </body>
