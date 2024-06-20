@@ -22,62 +22,67 @@ body{
                         <button class="btn btn-outline-primary" type="submit">Search</button>
                     </form>
                 </div>
-                {% if ordered_products %}
-                    {% for ordered_product in ordered_products %}
+                {% if grouped_orders %}
+                    {% for order_number, products in grouped_orders.items %}
                     <div class="row mt-3"> 
-                        <div class="col-md-12"><a href="{% url 'order-detail' ordered_product.order.order_number %}">{{ordered_product.order.order_number}}
-                            <div class="card">
-                                <div class="row">
-                                    <div class="col-lg-2">
-                                        <div class="card-body text-left">
-                                            <div class="row">
-                                                <img src="{{ordered_product.product.product_image1.url}}" class="img-fluid" style="height: 100px; width: auto;" alt="Order Success">   
+                        <div class="col-md-12">
+                            <a href="{% url 'order-detail' order_number %}">
+                                <h5 class="text-warning">Order ID: {{ order_number }}</h5>
+                                <div class="card">
+                                    {% for product in products %}
+                                    <div class="row">
+                                        <div class="col-lg-2">
+                                            <div class="card-body text-left">
+                                                <div class="row">
+                                                    <img src="{{product.product.product_image1.url}}" class="img-fluid" style="height: 100px; width: auto;" alt="No image">   
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-3">
-                                        <div class="card-body text-right">
-                                            <h5 class="mb-4 text-dark">{{ordered_product.product.product_name}}</h5>
-                                            <p>
-                                                {% if ordered_product.variations.all %}
-                                                    {% for item in ordered_product.variations.all %}
-                                                    {{ item.variation_category | capfirst }} : {{item.variation_value | capfirst}} <br>
-                                                    {% endfor %}
+                                        <div class="col-lg-3">
+                                            <div class="card-body text-right">
+                                                <h5 class="mb-4 text-dark">{{product.product.product_name}}</h5>
+                                                <p>
+                                                    {% if product.variations.all %}
+                                                        {% for item in product.variations.all %}
+                                                        {{ item.variation_category | capfirst }} : {{item.variation_value | capfirst}} <br>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                </p>
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <div class="card-body text-right">
+                                                <p class="text-dark">{{product.quantity}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <div class="card-body text-right">
+                                                <p class="text-dark">${{product.product_price}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="card-body text-right">
+                                                {% if product.order.status == 'Ordered' %}
+                                                    <h5 class="mb-4 text-primary"><i class="bi bi-box text-ordered"></i> Ordered</h5>
+                                                {% elif product.order.status == 'Cancelled' %}
+                                                    <h5 class="mb-4 text-danger"><i class="bi bi-exclamation-lg text-cancelled"></i> Cancelled</h5>
+                                                {% elif product.order.status == 'Shipped' %}
+                                                    <h5 class="mb-4 text-info"><i class="bi bi-truck text-shipped"></i> Shipped</h5>
+                                                {% elif product.order.status == 'Delivered' %}
+                                                    <h5 class="mb-4 text-success"><i class="bi bi-check-circle text-delivered"></i> Delivered</h5>
+                                                {% elif product.order.status == 'New' %}
+                                                    <h5 class="mb-4 text-warning"><i class="bi bi-star text-new"></i> New</h5>
+                                                {% elif product.order.status == 'Returned' %}
+                                                    <h5 class="mb-4 text-danger"><i class="bi bi-arrow-clockwise text-new"></i> Returned</h5>
                                                 {% endif %}
-                                            </p>
-                                            
+                                                <p>on {{product.order.updated_at}}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-2">
-                                        <div class="card-body text-right">
-                                            <p class="text-dark">{{ordered_product.quantity}}</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-2">
-                                        <div class="card-body text-right">
-                                            <p class="text-dark">${{ordered_product.product_price}}</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3">
-                                        <div class="card-body text-right">
-                                            {% if ordered_product.order.status == 'Ordered' %}
-                                                <h5 class="mb-4 text-primary"><i class="bi bi-box text-ordered"></i> Ordered</h5>
-                                            {% elif ordered_product.order.status == 'Cancelled' %}
-                                                <h5 class="mb-4 text-danger"><i class="bi bi-exclamation-lg text-cancelled"></i> Cancelled</h5>
-                                            {% elif ordered_product.order.status == 'Shipped' %}
-                                                <h5 class="mb-4 text-info"><i class="bi bi-truck text-shipped"></i> Shipped</h5>
-                                            {% elif ordered_product.order.status == 'Delivered' %}
-                                                <h5 class="mb-4 text-success"><i class="bi bi-check-circle text-delivered"></i> Delivered</h5>
-                                            {% elif ordered_product.order.status == 'New' %}
-                                                <h5 class="mb-4 text-warning"><i class="bi bi-star text-new"></i> New</h5>
-                                            {% elif ordered_product.order.status == 'Returned' %}
-                                                <h5 class="mb-4 text-danger"><i class="bi bi-arrow-clockwise text-new"></i> Returned</h5>
-                                            {% endif %}
-                                            <p>on {{ordered_product.order.updated_at}}</p>
-                                        </div>
-                                    </div>
+                                    </div><hr>
+                                    {% endfor %}
                                 </div>
-                            </div></a>
+                            </a>
                         </div>
                     </div> <!-- row.// -->   
                     {% endfor %}   

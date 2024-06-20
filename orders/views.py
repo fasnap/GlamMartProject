@@ -28,10 +28,6 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 @login_required(login_url='user-login')
 def paypal_payments(request):
-    print("hi----------------------hi")
-    csrf_token = request.META.get("CSRF_COOKIE")
-    print(csrf_token)
-  
     body=json.loads(request.body)
     try:
         order=Order.objects.get(user=request.user, is_ordered=False, order_number=body['orderID'])
@@ -103,6 +99,10 @@ def paypal_payments(request):
         return JsonResponse(data)
     except Exception as e:
         print("Error: ", e)
+        order.status = 'Ordered'
+        order.save()
+        order.payment.status='Pending'
+        order.payment.save()
         return JsonResponse({'error': str(e)}, status=500)
 
 @login_required(login_url='user-login')

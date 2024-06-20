@@ -13,6 +13,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.views.decorators.csrf import csrf_exempt
+from collections import defaultdict
 
 # Admin view all users
 @login_required(login_url='admin-login')
@@ -84,8 +85,15 @@ def my_orders(request):
         ).order_by('-created_at')
     else:
         ordered_products=OrderProduct.objects.filter(user=request.user, ordered=True).order_by('-created_at')
+    grouped_orders = {}
+    for product in ordered_products:
+        order_number=product.order.order_number
+        if order_number not in grouped_orders:
+            grouped_orders[order_number]=[]
+        grouped_orders[order_number].append(product)
     context={
         'ordered_products':ordered_products,
+        'grouped_orders':grouped_orders,
     }
     return render(request,'glam_user/my_orders.html', context)
 
