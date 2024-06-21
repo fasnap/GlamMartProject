@@ -247,7 +247,7 @@ def store(request, category_slug=None, sub_category_slug=None):
     elif sort_by == "popular":
         products=products.annotate(num_orders=Count('orderproduct')).distinct().order_by('-num_orders')
     
-    paginator=Paginator(products, 6)
+    paginator=Paginator(products, 9)
     page=request.GET.get('page')
     paged_products=paginator.get_page(page)
     
