@@ -100,26 +100,25 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Filters for Daily, Monthly, Yearly -->
                     <div class="row">
-                        <div class="col-md-6 grid-margin stretch-card">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="clearfix">
-                                        <h4 class="card-title float-start">MONTHLY SALES</h4>
-                                        <div id="visit-monthly-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-end"></div>
-                                    </div>
-                                    <canvas id="monthly-sales-chart" width="380" height="180"></canvas>
-                                </div>
+                        <div class="col-md-12">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <a href="?filter=daily" class="btn btn-outline-secondary mb-3">Daily</a>
+                                <a href="?filter=monthly" class="btn btn-outline-secondary mb-3">Monthly</a>
+                                <a href="?filter=yearly" class="btn btn-outline-secondary mb-3">Yearly</a>
                             </div>
                         </div>
-                        <div class="col-md-6 grid-margin stretch-card">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 grid-margin stretch-card">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="clearfix">
-                                        <h4 class="card-title float-start">YEARLY SALES</h4>
-                                        <div id="visit-yearly-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-end"></div>
+                                        <h4 class="card-title float-start">SALES DATA</h4>
+                                        <div id="visit-monthly-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-end"></div>
                                     </div>
-                                    <canvas id="yearly-sales-chart" width="380" height="180"></canvas>
+                                    <canvas id="sales-chart" width="100" height="30"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -283,20 +282,20 @@ new Chart(ctxSubcategory, {
     }
 });
 
-// Monthly sales bar chart
-const monthlyLabels = {{ monthly_labels|safe }};
-const monthlyData = {{ monthly_data|safe }};
-let monthlyCtx = document.getElementById('monthly-sales-chart').getContext('2d');
+// sales bar chart
+const labels = {{ labels|safe }};
+const data = {{ data|safe }};
+const ctx = document.getElementById("sales-chart").getContext("2d");
 
-let monthlyChart = new Chart(monthlyCtx, {
-    type: 'bar',
+new Chart(ctx, {
+    type: "bar",
     data: {
-        labels: monthlyLabels,
+        labels: labels,
         datasets: [{
-            label: 'Monthly Sales',
-            data: monthlyData,
-            backgroundColor: 'rgba(218, 112, 214, 0.6)',
-            borderColor: 'rgba(150, 100, 255, 1)',
+            label: "Sales",
+            data: data,
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+            borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 1
         }]
     },
@@ -307,37 +306,7 @@ let monthlyChart = new Chart(monthlyCtx, {
             }
         },
         title: {
-            text: 'Monthly Sales',
-            display: true
-        }
-    }
-});
-
-// Yearlt sales bar chart
-const yearlyLabels = {{ yearly_labels|safe }};
-const yearlyData = {{ yearly_data|safe }};
-let yearlyCtx = document.getElementById('yearly-sales-chart').getContext('2d');
-
-let yearlyChart = new Chart(yearlyCtx, {
-    type: 'bar',
-    data: {
-        labels: yearlyLabels,
-        datasets: [{
-            label: 'Yearly Sales',
-            data: yearlyData,
-            backgroundColor: 'rgba(70, 192, 192, 0.6)',
-            borderColor: 'rgba(150, 100, 255, 1)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        },
-        title: {
-            text: 'Yearly Sales',
+            text: 'Sales',
             display: true
         }
     }

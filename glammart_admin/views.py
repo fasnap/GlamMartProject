@@ -9,8 +9,9 @@ from django.db.models import Count, Sum, F
 from user_account.models import UserAccount
 from orders.models import Order, OrderProduct
 from category.models import Category
-from django.db.models.functions import TruncMonth, TruncYear
+from django.db.models.functions import TruncMonth, TruncYear, TruncDay
 from django.utils.text import Truncator
+from django.utils import timezone
 
 # Create your views here.
 def truncate_name(name,length):
@@ -50,23 +51,21 @@ def admin_home(request):
             subcategory_labels.append(item['product__sub_category__sub_category_name'])
             subcategory_data.append(item['subcategory_count'])
 
-        # Monthly sales data chart
-        monthly_sales = Order.objects.filter(payment__status='COMPLETED').annotate(month=TruncMonth('created_at')).values('month').annotate(total_monthly_sales=Sum('order_total')).order_by('month')
-        
-        monthly_labels = []
-        monthly_data = []
-        for item in monthly_sales:
-            monthly_labels.append(item['month'].strftime('%B %Y'))
-            monthly_data.append(item['total_monthly_sales'])
-        
-        # Yearly sales
-        yearly_sales = Order.objects.filter(payment__status='COMPLETED').annotate(year=TruncYear('created_at')).values('year').annotate(total_yearly_sales=Sum('order_total')).order_by('year')
+        today = timezone.now()
+        filter_type = request.GET.get('filter', 'daily')
 
-        yearly_labels = []
-        yearly_data = []
-        for item in yearly_sales:
-            yearly_labels.append(item['year'].strftime('%Y'))
-            yearly_data.append(item['total_yearly_sales'])
+        if filter_type == 'daily':
+            sales = Order.objects.filter(payment__status='COMPLETED').annotate(day=TruncDay('created_at')).values('day').annotate(total_sales=Sum('order_total')).order_by('day')
+            labels = [sale['day'].strftime('%d %B %Y') for sale in sales]
+            data = [sale['total_sales'] for sale in sales]
+        elif filter_type == 'monthly':
+            sales = Order.objects.filter(payment__status='COMPLETED').annotate(month=TruncMonth('created_at')).values('month').annotate(total_sales=Sum('order_total')).order_by('month')
+            labels = [sale['month'].strftime('%B %Y') for sale in sales]
+            data = [sale['total_sales'] for sale in sales]
+        elif filter_type == 'yearly':
+            sales = Order.objects.filter(payment__status='COMPLETED').annotate(year=TruncYear('created_at')).values('year').annotate(total_sales=Sum('order_total')).order_by('year')
+            labels = [sale['year'].strftime('%Y') for sale in sales]
+            data = [sale['total_sales'] for sale in sales]
 
         context={
             'best_selling_products':best_selling_products,
@@ -83,10 +82,8 @@ def admin_home(request):
             'product_data': product_data,
             'subcategory_labels':subcategory_labels,
             'subcategory_data':subcategory_data,
-            'monthly_labels':monthly_labels,
-            'monthly_data':monthly_data,
-            'yearly_labels':yearly_labels,
-            'yearly_data':yearly_data,
+            'labels':labels,
+            'data':data,
         }
         return render(request,'glam_admin/admin_home.html', context)
     else:
