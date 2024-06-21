@@ -118,11 +118,15 @@ def add_subcategory(request,category_slug):
     if request.method=="POST":
         sub_category_name=request.POST['sub_category_name']
         description=request.POST['description']
-        subcategory_offer=request.POST.get('subcategory_offer')
+        subcategory_offer=request.POST.get('subcategory_offer',0)
         sub_category_image=request.FILES.get('sub_category_image')
         category = Category.objects.get(slug=category_slug)
         sub_category_slug_name=sub_category_name + ' ' + category.category_name
         slug= slugify(sub_category_slug_name)
+        try:
+            subcategory_offer = float(subcategory_offer)
+        except ValueError:
+            subcategory_offer = 0
         sub_category=SubCategory.objects.create(sub_category_name=sub_category_name,description=description,sub_category_image=sub_category_image,slug=slug,category=category, subcategory_offer=subcategory_offer)
         sub_category.save()
         return redirect('sub-category',category_slug=category_slug)
@@ -142,7 +146,10 @@ def edit_subcategory(request,subcategory_slug):
             sub_category_image=request.FILES['sub_category_image']
         else:
             sub_category_image=sub_category.sub_category_image
-            
+        try:
+            subcategory_offer = float(subcategory_offer)
+        except ValueError:
+            subcategory_offer = 0
         sub_category.sub_category_name=sub_category_name
         sub_category.sub_category_image=sub_category_image
         sub_category.description=description
