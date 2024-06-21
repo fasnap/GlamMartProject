@@ -46,10 +46,10 @@
                         <div class="checkout__form__input ">
                             <p>Select Address</p>
                             <select name="address_id" id="address_id" class="form-control">
-                                
+                                <option value="">-- Select Address --</option>
                                 {% for address in addresses %}
                                     {% if address.is_deleted == False %}
-                                    <option value="{{ address.id }}" {% if address.is_default %}selected{% endif %}>{{ address.first_name }} {{address.last_name}} ,{{address.phone_number}}, {{ address.address_line1 }}, {{ address.city }}, {{ address.state }}, {{ address.country }}, {{ address.zip_code }}</option>
+                                    <option value="{{ address.id }}">{{ address.first_name }} {{address.last_name}} ,{{address.phone_number}}, {{ address.address_line1 }}, {{ address.city }}, {{ address.state }}, {{ address.country }}, {{ address.zip_code }}</option>
                                     {% endif %}
                                 {% endfor %}
                             </select>
