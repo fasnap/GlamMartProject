@@ -25,7 +25,7 @@
                         <h4>Order Number: {{ order.order_number }}</h4>
                     </div>
                     <div class="col-md-4 text-right">
-                        {% if order.status != 'Delivered' and order.status != 'Cancelled' %}
+                        {% if order.status != 'Delivered' and order.status != 'Cancelled' and order.status != 'Returned'%}
                             <form method="post" action="{% url 'cancel_order' order.order_number %}">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-danger">Cancel Order</button>
