@@ -21,7 +21,7 @@ from coupons.models import Coupons
 def user_home(request):
     products=Product.objects.all().order_by('-created_at')[:8]
     categories=Category.objects.all().order_by('created_at')[:1]
-    all_categories = Category.objects.annotate(product_count=Count('product')).order_by('id')[1:]
+    all_categories = Category.objects.annotate(product_count=Count('product')).order_by('id')[2:6]
     coupon=Coupons.objects.filter(status=True).order_by('-discount').first()
     max_order_products=Product.objects.all().annotate(num_orders=Count('orderproduct')).order_by('-num_orders')[:3]
     top_rated_products=Product.objects.annotate(avg_rating=Avg('reviewrating__rating')).order_by('-avg_rating')[:3]
