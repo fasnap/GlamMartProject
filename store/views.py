@@ -162,6 +162,8 @@ def edit_product(request,product_slug):
         product.sub_category=sub_category
         if int(stock) <=0:
             product.is_available=False
+        else:
+            product.is_available=True
         product.save()
         return redirect('product')
     else:
@@ -354,7 +356,6 @@ def add_variation(request):
     else:
         products=Product.objects.all()
         variations_categories=Variation.variation_category_choice
-        print(variations_categories)
         context={
             'products':products,
             'variations_categories':variations_categories,

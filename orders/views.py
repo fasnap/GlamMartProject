@@ -98,7 +98,6 @@ def paypal_payments(request):
         }
         return JsonResponse(data)
     except Exception as e:
-        print("Error: ", e)
         order.status = 'Ordered'
         order.save()
         order.payment.status='Pending'

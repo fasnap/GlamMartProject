@@ -125,8 +125,7 @@ def user_register(request):
             user.save()
             # After saving the user, you can create an OTP object and associate it with the user
             otp_instance = OTP.objects.create(user=user, otp=otp, created_at=timezone.now())
-             
-            print(otp)
+         
             # Send OTP to user's email
             send_mail(
                 'OTP for Registration',

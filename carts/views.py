@@ -7,6 +7,8 @@ from django.http import HttpResponse
 from users.models import UserAddress
 from coupons.models import Coupons as Coupon
 from django.db.models import Q
+
+from django.http import JsonResponse
 # Create your views here.
 
 # private function for getting the session id as cart id or create a new session id 
@@ -111,22 +113,7 @@ def add_cart(request, product_id):
 
         return redirect('cart')
 
-def decrement_cart(request, product_id, cart_item_id):
-    product=get_object_or_404(Product, id=product_id)
-    try:
-        if request.user.is_authenticated:
-            cart_item=CartItem.objects.get(product=product,user=request.user, id=cart_item_id)
-        else:
-            cart=Cart.objects.get(cart_id=_cart_id(request))
-            cart_item=CartItem.objects.get(product=product,cart=cart, id=cart_item_id)
-        if cart_item.quantity > 1 :
-            cart_item.quantity -= 1
-            cart_item.save()
-        else:
-            cart_item.delete()
-    except:
-        pass
-    return redirect('cart')
+
 
 def remove_cart_item(request,product_id,cart_item_id):
     product=get_object_or_404(Product,id=product_id)
@@ -219,4 +206,62 @@ def checkout(request,total=0,quantity=0,cart_items=None):
         'addresses':addresses,
     }
     return render(request,'glam_user/checkout.html',context)
+
+
+def increment_cart_item(request):
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+        cart_item_id = request.POST.get('cart_item_id')
+        if request.user.is_authenticated:
+            cart_item = get_object_or_404(CartItem, id=cart_item_id, user=request.user)
+        else:
+            cart = Cart.objects.get(cart_id=_cart_id(request))
+            cart_item = get_object_or_404(CartItem, id=cart_item_id, cart=cart)
+        if cart_item.product.stock > cart_item.quantity:
+            cart_item.quantity += 1
+            cart_item.save()
+            response = {'status': 'success', 'quantity': cart_item.quantity, 'item_total': cart_item.product.offer_price * cart_item.quantity}
+        else:
+            response = {'error':'Not enough stock'}
+        return JsonResponse(response)
+    
+def decrement_cart_item(request):
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+        cart_item_id = request.POST.get('cart_item_id')
+        if request.user.is_authenticated:
+            cart_item = get_object_or_404(CartItem, id=cart_item_id, user=request.user)
+        else:
+            cart = Cart.objects.get(cart_id=_cart_id(request))
+            cart_item = get_object_or_404(CartItem, id=cart_item_id, cart=cart)
+
+        if cart_item.quantity > 1:
+            cart_item.quantity -= 1
+            cart_item.save()
+            return JsonResponse({'quantity': cart_item.quantity, 'item_total': cart_item.product.offer_price * cart_item.quantity})
+        else:
+            cart_item.delete()
+            return JsonResponse({'quantity': 0, 'item_total': 0})
+
+def get_cart_totals(request):
+    cart_items = CartItem.objects.filter(user=request.user, is_active=True)
+    total = 0
+    delivery_charge = 0
+    has_active_items = cart_items.exists()
+
+    for cart_item in cart_items:
+        total += cart_item.product.offer_price * cart_item.quantity
+
+    if total < 500 and total > 0:
+        delivery_charge = 50  # Example fixed delivery charge
+
+    grand_total = total + delivery_charge
+    response = {
+        'total': total,
+        'delivery_charge': delivery_charge,
+        'grand_total': grand_total,
+        'has_active_items': has_active_items,
+    }
+    return JsonResponse(response)
+
 
