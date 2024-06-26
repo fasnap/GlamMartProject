@@ -217,9 +217,14 @@ $(document).ready(function(){
                 csrfmiddlewaretoken: '{{ csrf_token }}'
             },
             success: function(response) {
-                $this.closest('tr').find('input').val(response.quantity);
-                $this.closest('tr').find('.cart__total').text('$ ' + response.item_total);
-                updateCartTotals();
+                if (response.error) {
+                    // Display error message when quantity exceeds stock
+                    alert(response.error);
+                } else {
+                    $this.closest('tr').find('input').val(response.quantity);
+                    $this.closest('tr').find('.cart__total').text('$ ' + response.item_total);
+                    updateCartTotals();
+                }
             }
         });
     });

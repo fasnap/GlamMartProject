@@ -172,7 +172,6 @@
     </section>
     
     <!-- Checkout Section End -->
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script>
     document.getElementById('address_id').addEventListener('change', function() {
         var addressId = this.value;
@@ -195,45 +194,46 @@
     $(document).ready(function () {
         console.clear();
         document.getElementById("promo").textContent = "";
+        document.getElementById("discount").textContent = "";
     });
 
     function couponCheck() {
-    var coupon = $("#coupon").val();
-    var total = $("#apply").val();
+        var coupon = $("#coupon").val();
+        var total = $("#apply").val();
 
-    $.ajax({
-        url: "{%url 'checkCoupon'%}",
-        type: "POST",
-        data: {
-            coupon: coupon,
-            total: total,
-            csrfmiddlewaretoken: "{{csrf_token}}",
-    },
-    dataType: "json",
-    success: function (json) {
-        if (json.flag == 1) {
-            swal("Oops", "Coupon is already used", "error");
-        } else if (json.flag == 0) {
-            swal("Oops", "Coupon is Not Active", "error");
-        } else {
-            swal({
-                title: "Congratulation!",
-                text: "You Got A Coupon!",
-                icon: "success",
-                button: "Aww yess!",
-            });
-            console.log(json.discount_price)
-            document.getElementById("grandtotal").innerHTML = '<div class="col">Total Amount:</div><div class="col text-right">$ ' + json.total + '</div>';
-            document.getElementById("discount").innerHTML = '<div class="col text-right text-success">- $ ' + json.discount_price + '</div>';
-            if ($("#coupon").val() !== "") {
-                    document.getElementById("promo").innerHTML = '<div class="col text-right">' + $("#coupon").val() + '</div>';
+        $.ajax({
+            url: "{%url 'checkCoupon'%}",
+            type: "POST",
+            data: {
+                coupon: coupon,
+                total: total,
+                csrfmiddlewaretoken: "{{csrf_token}}",
+            },
+            dataType: "json",
+            success: function (json) {
+                if (json.flag == 1) {
+                    alert("Coupon is already used");
+                } else if (json.flag == 0) {
+                    alert("Coupon is Not Active");
+                    $("#coupon").val("");
+                    document.getElementById("promo").innerHTML = ""; // Clear the displayed coupon
+                    document.getElementById("discount").innerHTML = ""; // Clear the displayed discount
+                    document.getElementById("grandtotal").innerHTML = '<div class="col">Total Amount:</div><div class="col text-right">$ ' + json.total.toFixed(2) + '</div>'; // Reset total amount
                 } else {
-                    document.getElementById("promo").innerHTML = '';
-            }
-        }
-    },
-    });
-  }
+                    alert("Your Coupon applied Successfully");
+                    console.log(json.discount_price)
+                    document.getElementById("grandtotal").innerHTML = '<div class="col">Total Amount:</div><div class="col text-right">$ ' + json.total.toFixed(2) + '</div>';
+                    document.getElementById("discount").innerHTML = '<div class="col text-right text-success">- $ ' + json.discount_price.toFixed(2) + '</div>';
+                    document.getElementById("promo").textContent = coupon; // Update the displayed coupon code
+                    
+                }
+            },
+            error: function (xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+                alert("Something went wrong!");
+            },
+        });
+    }
 </script>
 
 </body>
