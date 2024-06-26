@@ -75,6 +75,10 @@ def edit_coupon(request,id):
         form=CouponApplyForm(request.POST,request.FILES,instance=coupon)
         if form.is_valid():
             new_code = form.cleaned_data['code']
+            discount = form.cleaned_data['discount']
+            if int(discount) < 0:
+                messages.error(request, "Coupon discount cannot be negative")
+                return render(request, 'glam_admin/edit_coupon.html', {'coupon': coupon, 'form': form})
             if Coupons.objects.filter(code=new_code).exclude(id=coupon.id).exists():
                 messages.error(request, "Coupon code already exists")
                 return render(request, 'glam_admin/edit_coupon.html', {'coupon': coupon, 'form': form})
@@ -102,6 +106,10 @@ def add_coupon(request):
         form = CouponApplyForm(request.POST)
         if form.is_valid():
             code = form.cleaned_data['code']
+            discount = form.cleaned_data['discount']
+            if int(discount) < 0:
+                messages.error(request, "Coupon discount cannot be negative")
+                return render(request, 'glam_admin/add_coupon.html', {'form': form})
             try:
                 existing_coupons = Coupons.objects.filter(code=code)
                 if existing_coupons.exists():
