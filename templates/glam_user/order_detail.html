@@ -86,17 +86,19 @@
                                     </div>
                                 </div>
                                 {% else %}
-                                <div class="col-lg-3 col-md-3 border border-light">
-                                    <div class="card-body text-right">
-                                        <i class="fa fa-exclamation-triangle text-danger fa-3x" aria-hidden="true"></i>
-                                        <h5 class="mb-4 text-danger">Payment {{order.payment.status}}</h5>
-                                        <h5 class="mb-4 text-info">Method : {{order.payment.payment_method}}</h5>
-                                        Complete Payment<br><br>
-                                        <div id="paypal-button-container">
-                                            <!-- Paypal button will ,load -->
+                                    {% if order.status != 'Cancelled' %}
+                                        <div class="col-lg-3 col-md-3 border border-light">
+                                            <div class="card-body text-right">
+                                                <i class="fa fa-exclamation-triangle text-danger fa-3x" aria-hidden="true"></i>
+                                                <h5 class="mb-4 text-danger">Payment {{order.payment.status}}</h5>
+                                                <h5 class="mb-4 text-info">Method : {{order.payment.payment_method}}</h5>
+                                                Complete Payment<br><br>
+                                                <div id="paypal-button-container">
+                                                    <!-- Paypal button will ,load -->
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
+                                    {% endif %}
                                 {% endif %}
                             {% endif %}
                             {% if order.payment.status == 'COMPLETED' or order.payment.status == 'REFUNDED'%}

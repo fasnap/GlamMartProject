@@ -140,6 +140,9 @@ def cancel_order(request, order_number):
                 return redirect('order-detail', order_id=order_number)
 
         else:
+            order.status = 'Cancelled'
+            order.save()
+            messages.success(request, "Your order has been cancelled successfully.")
             return redirect('order-detail', order_id=order_number)
 
 # User request for returning the delivered order
