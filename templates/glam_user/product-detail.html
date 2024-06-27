@@ -139,7 +139,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="product__details__text">
-                        <h3>{{product.product_name}}<span>Brand: SKMEIMore Men Watches from SKMEI</span></h3>
+                        <h3>{{product.product_name}}</h3>
                         <div class="rating-star text-warning">
                             <span>
                                 <i class="fa fa-star{% if product.average_review < 0.5 %}-o{% elif product.average_review >= 0.5 and product.average_review < 1 %}-half-o {% endif %}" aria-hidden="true"></i> 
@@ -186,7 +186,7 @@
                                 </li>
                                 <li>
                                     <span>Select size:</span>
-                                    <select name="size" class="form-control">
+                                    <select name="size" class="form-control" required>
                                         <option value="" disabled selected>Select</option>
                                         {% for variation in product.variation_set.sizes %}
                                         <option value="{{variation.variation_value | lower}}">{{variation.variation_value | capfirst}}</option>
